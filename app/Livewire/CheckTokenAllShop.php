@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Jobs\CsrfToken;
 use App\Jobs\UpdateChat;
 use App\Jobs\UpdateInbox;
 use App\Models\Message;
@@ -57,6 +58,7 @@ class CheckTokenAllShop extends ModalComponent
             if ($message) {
                 UpdateChat::dispatch($message);
             }
+            CsrfToken::dispatch($shop);
         });
 
         sleep(2);

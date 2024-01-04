@@ -129,7 +129,7 @@
                     <div class="w-full mx-auto px-6">
                         <!-- Page Heading -->
                         <div class="flex items-center justify-between mb-6">
-                            <h1 class="text-3xl mb-0 text-[#5a5c69]">{{ $title }}</h1>
+                            {{ $title }}
                             {{ $button }}
                         </div>
 

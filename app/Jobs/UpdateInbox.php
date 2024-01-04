@@ -55,6 +55,8 @@ class UpdateInbox implements ShouldQueue
                     'profile_image' => $message['profile_image'],
                     'product_title' => $message['product_title'],
                     'product_image' => $message['product_image'],
+                    'price_formatted' => $message['price_formatted'],
+                    'product_url' => $message['product_url'],
                     'channel_url' => $message['channel_url'],
                     'latest_message' => $message['latest_message'],
                     'unread_count' => $message['unread_count'],

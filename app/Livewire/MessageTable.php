@@ -3,15 +3,19 @@
 namespace App\Livewire;
 
 use App\Jobs\UpdateInbox;
+use App\Marketplace\Factory as MarketplaceFactory;
 use App\Models\Message;
 use App\Models\Shop;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Date;
 use Livewire\Component;
 
 class MessageTable extends Component
 {
     public $filters = [
-        'shop' => 0
+        'shop' => 0,
+        'unread' => 0,
+        'search' => '',
     ];
 
     protected function getShops()
@@ -30,8 +34,35 @@ class MessageTable extends Component
         if ($this->filters['shop']) {
             $messages->where('shop_id', $this->filters['shop']);
         }
+        if ($this->filters['unread']) {
+            $messages->where('unread_count', '>', 0);
+        }
+        if ($this->filters['search']) {
+            $messages->where(function ($query) {
+                $query->whereIn('id', function (Builder $subquery) {
+                    $subquery->select('message_id')->from('chat')
+                        ->whereRaw('`chat`.`message` LIKE \'%'.$this->filters['search'].'%\'');
+                });
+                $query->orWhere('username', 'LIKE', '%'.$this->filters['search'].'%');
+            });
+        }
 
-        return $messages->get();
+        return $messages->get()->filter(function ($message) {
+            if ($message->shop) {
+                return true;
+            }
+            return false;
+        });
+    }
+
+    protected function isFiltered()
+    {
+        foreach ($this->filters as $key => $value) {
+            if ($this->filters[$key]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected function diffForHumansLatestCreatedAt($date)
@@ -47,7 +78,9 @@ class MessageTable extends Component
 
     public function render()
     {
-        UpdateInbox::dispatch();
+        //if (! $this->isFiltered()) {
+        //    UpdateInbox::dispatch();
+        //}
 
         return view('livewire.message-table')
             ->with('shops', $this->getShops())

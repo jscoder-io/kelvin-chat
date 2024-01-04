@@ -20,6 +20,8 @@ class Message extends Model
         'profile_image',
         'product_title',
         'product_image',
+        'price_formatted',
+        'product_url',
         'channel_url',
         'latest_message',
         'unread_count',

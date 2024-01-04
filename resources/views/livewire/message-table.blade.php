@@ -1,6 +1,6 @@
-<div class="bg-white p-4 border border-gray-300 rounded-md shadow-md h-[475px]" wire:poll.10s>
+<div class="bg-white p-4 border border-gray-300 rounded-md shadow-md" style="height:calc(100vh - 8rem);" wire:poll.10s>
     <div class="flex mb-4">
-        <div class="w-1/3">
+        <div class="w-1/4">
             <select wire:model="filters.shop" wire:change="$refresh" class="block mt-1 p-2 w-full text-sm bg-white border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm">
                 <option value="0">{{ __('All Shops') }}</option>
                 @foreach ($shops as $shop)
@@ -8,47 +8,45 @@
                 @endforeach
             </select>
         </div>
-        <div class="w-2/3 pl-4">
-            <input type="text" placeholder="Search" class="block mt-1 py-2 px-4 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
+        <div class="w-1/4 pl-4">
+            <select wire:model="filters.unread" wire:change="$refresh" class="block mt-1 p-2 w-full text-sm bg-white border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm">
+                <option value="0">{{ __('All Messages') }}</option>
+                <option value="1">{{ __('Unread') }}</option>
+            </select>
+        </div>
+        <div class="w-2/4 pl-4">
+            <input wire:model.live="filters.search" type="text" placeholder="Search" class="block mt-1 py-2 px-4 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
         </div>
     </div>
-    <div class="h-[385px] overflow-y-scroll">
+    <div class="overflow-y-scroll" style="height:calc(100vh - 14rem);">
         @forelse ($messages as $message)
-        <div wire:click="chat({{ $message->id }})" class="flex mb-4 p-4 border-b border-gray-300 hover:bg-gray-100 hover:cursor-pointer">
-            <div class="w-1/6">
-                <img class="w-24 h-24 object-cover" src="{{ $message->profile_image }}" />
-            </div>
-            <div class="w-4/6">
-                <div class="flex mb-4">
-                    <div class="w-1/2 text-left">
-                        <span class="inline-block text-green-700">{{ $message->username }}</span> 
-                        @if ($message->unread_count > 0)
-                        <span class="inline-block ml-2 text-white bg-blue-700 text-xs px-1.5 py-0.5 leading-none rounded">{{ $message->unread_count }}</span>
-                        @endif
-                    </div>
-                    <div class="w-1/2 text-right">
-                        <span class="font-bold">{{ $message->product_title }}</span>
-                    </div>
-                </div>
-                <div class="flex mb-4">
-                    <div class="w-1/2 text-left">
-                        <div @class(['truncate', 'font-bold' => $message->unread_count > 0])>{{ $message->latest_message }}</div>
-                    </div>
-                    <div class="w-1/2 text-right">
-                        <span class="text-sm text-sky-700 font-bold">{{ $message->shop->name }}</span>
-                    </div>
-                </div>
+        <div wire:click="chat({{ $message->id }})" class="flex justify-between mb-4 p-4 pl-0 border-b border-gray-300 hover:bg-gray-100 hover:cursor-pointer">
+            <div class="w-3/4 pr-4 text-left">
                 <div class="flex">
-                    <div class="w-1/2 text-left text-sm text-slate-400">
-                        {{ $this->diffForHumansLatestCreatedAt($message->latest_created) }}
-                    </div>
-                    <div class="w-1/2 text-right text-sm font-bold">
-                        {{ $message->shop->marketplace }}
+                    <img class="w-14 h-14 object-cover" src="{{ $message->product_image }}" />
+                    <div class="w-3/4 ml-6">
+                        <div class="mb-2">
+                            <span class="inline-block text-green-700">{{ $message->username }}</span> 
+                            @if ($message->unread_count > 0)
+                            <span class="inline-block ml-2 text-white bg-blue-700 text-xs px-1.5 py-0.5 leading-none rounded">{{ $message->unread_count }}</span>
+                            @endif
+                        </div>
+                        <div class="truncate">
+                            @if ($message->shop->marketplace == 'carousell.sg')
+                                @include('carousell.status', ['message' => $message])
+                            @endif
+                            <span @class(['font-bold' => $message->unread_count > 0])>{{ $message->latest_message }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="w-1/6">
-                <img class="w-24 h-24 object-cover float-right" src="{{ $message->product_image }}" />
+            <div class="w-1/4 pl-4 text-right">
+                <div class="text-sm text-sky-700 font-bold mb-4">
+                    {{ $message->shop->name }}
+                </div>
+                <div class="text-sm text-slate-400">
+                    {{ $this->diffForHumansLatestCreatedAt($message->latest_created) }}
+                </div>
             </div>
         </div>
         @empty

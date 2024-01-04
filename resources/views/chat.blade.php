@@ -1,6 +1,6 @@
 <x-admin-layout>
     <x-slot:title>
-        {{ __('Chat') }}
+        <!-- <h1 class="text-3xl mb-0 text-[#5a5c69]">{{ __('Chat') }}</h1> -->
     </x-slot>
 
     <x-slot:button>
@@ -8,4 +8,6 @@
     </x-slot>
 
     <livewire:chat-box :message="$id" />
+
+    <livewire:token-alert />
 </x-admin-layout>

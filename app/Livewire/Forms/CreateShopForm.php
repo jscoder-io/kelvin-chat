@@ -15,6 +15,8 @@ class CreateShopForm extends Form
     protected $label = [
         'jwt-token' => 'Jwt Token',
         'session-key' => 'Session Key',
+        'csrf-token' => 'Csrf Token',
+        '_csrf' => '_csrf',
     ];
 
     public function rules()
@@ -24,6 +26,8 @@ class CreateShopForm extends Form
             'marketplace' => 'required|string|max:225',
             'token.jwt-token' => 'required_if:marketplace,carousell.sg|string|max:225',
             'token.session-key' => 'required_if:marketplace,carousell.sg|string|max:225',
+            'token.csrf-token' => 'required_if:marketplace,carousell.sg|string|max:225',
+            'token._csrf' => 'required_if:marketplace,carousell.sg|string|max:225',
         ];
     }
 
@@ -38,6 +42,10 @@ class CreateShopForm extends Form
             'token.jwt-token.max' => 'The jwt token is too long.',
             'token.session-key.required_if' => 'The session key is required.',
             'token.session-key.max' => 'The session key is too long.',
+            'token.csrf-token.required_if' => 'The csrf token is required.',
+            'token.csrf-token.max' => 'The csrf token is too long.',
+            'token._csrf.required_if' => 'The _csrf is required.',
+            'token._csrf.max' => 'The _csrf is too long.',
         ];
     }
 
