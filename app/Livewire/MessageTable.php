@@ -33,6 +33,8 @@ class MessageTable extends Component
         $messages = Message::orderBy('latest_created', 'desc');
         if ($this->filters['shop']) {
             $messages->where('shop_id', $this->filters['shop']);
+        } elseif (auth()->user()->role > 1) {
+            $messages->whereIn('shop_id', auth()->user()->shop);
         }
         if ($this->filters['unread']) {
             $messages->where('unread_count', '>', 0);
