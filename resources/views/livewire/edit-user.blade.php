@@ -33,7 +33,7 @@
             <div class="w-2/3 ">
                 <select wire:model="form.shop" class="block mt-1 p-2 w-full text-sm bg-white border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" multiple>
                     @foreach (\App\Models\Shop::latest()->get() as $shop)
-                    <option value="{{ $shop->id }}">{{ __($shop->name) }}</option>
+                    <option value="{{ $shop->id }}" wire:mousedown="$dispatch('multiSelectWithoutCtrl', event);$wire.selectOption({{ $shop->id }})">{{ __($shop->name) }}</option>
                     @endforeach
                 </select>
                 @error('form.shop') <span class="text-red-400">{{ $message }}</span> @enderror

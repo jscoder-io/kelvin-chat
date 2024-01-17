@@ -158,5 +158,15 @@
 
         @livewireScripts
         @livewire('wire-elements-modal')
+
+        <script type="text/javascript">
+            addEventListener('DOMContentLoaded', () => {
+                Livewire.on('multiSelectWithoutCtrl', (event) => {
+                    event.preventDefault();
+                    event.target.parentElement.focus();
+                    event.target.selected = ! event.target.selected;
+                });
+            });
+        </script>
     </body>
 </html>
