@@ -81,6 +81,11 @@ class MessageTable extends Component
             ->diffForHumans([ 'parts' => 3, 'short' => true ]);
     }
 
+    public function updatedFilters($value, $key)
+    {
+        $this->reset('offset');
+    }
+
     public function prev()
     {
         $this->offset -= 30;
