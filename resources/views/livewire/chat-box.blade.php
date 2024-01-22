@@ -2,7 +2,21 @@
     <div class="w-2/3 flex flex-col">
         <div id="chat-box" class="h-full flex flex-col mb-0.5 p-2 border border-gray-300 rounded-md overflow-y-scroll">
         @foreach ($rows as $row)
-            <div @class(['flex items-end mt-6', 'justify-start' => $row->user == 'buyer', 'justify-center' => $row->user == 'system', 'justify-end' => $row->user == 'admin'])>
+            @if ($row->type == 'ADMM' && $row->custom_type == 'SYSTEM_MESSAGE')
+                @if (! in_array($message->buyer_id, $row->data['visibility']['user_ids']))
+                <div class="flex items-end mt-6 justify-center">
+                    <div class="max-w-[15rem] ml-4 px-3 py-2 bg-slate-100 border border-gray-300 rounded-md text-sm">
+                    {{ $row->message }}
+                    </div>
+                </div>
+                <div class="flex items-end mt-2 justify-center">
+                    <div class="text-[11px] text-center text-slate-400">
+                    {{ $this->diffForHumansLatestCreatedAt($row->created_at) }}
+                    </div>
+                </div>
+                @endif
+            @else
+            <div @class(['flex items-end mt-6', 'justify-start' => $row->user == 'buyer', 'justify-end' => $row->user == 'admin'])>
                 @if ($row->user == 'buyer')
                 <img class="w-10 h-10 object-cover" src="{{ $message->profile_image }}" />
                 @endif
@@ -22,17 +36,15 @@
                     @endif
                 </div>
             </div>
-            <div @class(['flex items-end mt-2', 'justify-start' => $row->user == 'buyer', 'justify-center' => $row->user == 'system', 'justify-end' => $row->user == 'admin'])>
+            @endif
+            <div @class(['flex items-end mt-2', 'justify-start' => $row->user == 'buyer', 'justify-end' => $row->user == 'admin'])>
                 @if ($row->user == 'buyer')
                 <div class="w-10"></div>
                 <div class="ml-4 text-[11px] text-start text-slate-400">
                     {{ $this->diffForHumansLatestCreatedAt($row->created_at) }}
                 </div>
-                @elseif ($row->user == 'system')
-                <div class="text-[11px] text-center text-slate-400">
-                    {{ $this->diffForHumansLatestCreatedAt($row->created_at) }}
-                </div>
-                @else
+                @endif
+                @if ($row->user == 'admin')
                 <div class="ml-4 text-[11px] text-end text-slate-400">
                     {{ $this->diffForHumansLatestCreatedAt($row->created_at) }}
                 </div>

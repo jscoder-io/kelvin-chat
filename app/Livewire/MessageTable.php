@@ -18,6 +18,8 @@ class MessageTable extends Component
         'search' => '',
     ];
 
+    public $offset = 0;
+
     protected function getShops()
     {
         $shops = Shop::latest();
@@ -30,11 +32,22 @@ class MessageTable extends Component
 
     protected function getMessages()
     {
-        $messages = Message::orderBy('latest_created', 'desc');
+        $messages = Message::orderBy('latest_created', 'desc')->offset($this->offset)->limit(30);
         if ($this->filters['shop']) {
             $messages->where('shop_id', $this->filters['shop']);
         } elseif (auth()->user()->role > 1) {
-            $messages->whereIn('shop_id', auth()->user()->shop);
+            $shops = Shop::whereIn('id', auth()->user()->shop)->get()
+                ->map(function ($shop) {
+                    return $shop->id;
+                })->all();
+            $shopIds = count($shops) > 0 ? $shops : [0];
+            $messages->whereIn('shop_id', $shopIds);
+        } else {
+            $shops = Shop::get()->map(function ($shop) {
+                return $shop->id;
+            })->all();
+            $shopIds = count($shops) > 0 ? $shops : [0];
+            $messages->whereIn('shop_id', $shopIds);
         }
         if ($this->filters['unread']) {
             $messages->where('unread_count', '>', 0);
@@ -49,12 +62,7 @@ class MessageTable extends Component
             });
         }
 
-        return $messages->get()->filter(function ($message) {
-            if ($message->shop) {
-                return true;
-            }
-            return false;
-        });
+        return $messages->get();
     }
 
     protected function isFiltered()
@@ -71,6 +79,16 @@ class MessageTable extends Component
     {
         return (string) Date::createFromTimeString($date)
             ->diffForHumans([ 'parts' => 3, 'short' => true ]);
+    }
+
+    public function prev()
+    {
+        $this->offset -= 30;
+    }
+
+    public function next()
+    {
+        $this->offset += 30;
     }
 
     public function chat($id)

@@ -18,7 +18,31 @@
             <input wire:model.live="filters.search" type="text" placeholder="Search" class="block mt-1 py-2 px-4 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
         </div>
     </div>
-    <div class="overflow-y-scroll" style="height:calc(100vh - 14rem);">
+    <div class="flex flex-row mb-2">
+        <div class="basis-1/2 text-right mr-2">
+            @if ($offset >= 30)
+            <a href="#" wire:click.prevent="prev" class="text-xl text-teal-400" title="Previous">
+                <i class="bi bi-arrow-left-square"></i>
+            </a>
+            @else
+            <div class="text-xl" title="Previous">
+                <i class="bi bi-arrow-left-square"></i>
+            </div>
+            @endif
+        </div>
+        <div class="basis-1/2 text-left ml-2">
+            @if ($messages->count() == 30)
+            <a href="#" wire:click.prevent="next" class="text-xl text-teal-400" title="Next">
+                <i class="bi bi-arrow-right-square"></i>
+            </a>
+            @else
+            <div class="text-xl" title="Next">
+                <i class="bi bi-arrow-right-square"></i>
+            </div>
+            @endif
+        </div>
+    </div>
+    <div class="overflow-y-scroll" style="height:calc(100vh - 16rem);">
         @forelse ($messages as $message)
         <div wire:click="chat({{ $message->id }})" class="flex justify-between mb-4 p-4 pl-0 border-b border-gray-300 hover:bg-gray-100 hover:cursor-pointer">
             <div class="w-3/4 pr-4 text-left">

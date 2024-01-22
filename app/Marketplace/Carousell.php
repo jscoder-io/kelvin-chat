@@ -18,9 +18,9 @@ class Carousell
     protected $csrf_token;
     protected $_csrf;
 
-    protected $inbox_url = 'https://www.carousell.sg/ds/offer/1.0/me/?_path=/1.0/me/&count=20&type=all';
+    protected $inbox_url = 'https://www.carousell.sg/ds/offer/1.0/me/?_path=/1.0/me/&count=100&type=all';
     protected $read_url = 'https://www.carousell.sg/ds/api-offer/2.7/offer/%s/?_path=/2.7/offer/%s/&fetch_dispute=1&mark_as_read=true';
-    protected $chat_url = 'https://api-f3cb6187-cb42-4cd1-95fc-1c46f8856006.sendbird.com/v3/group_channels/%s/messages?is_sdk=true&prev_limit=30&next_limit=0&include=false&reverse=false&message_ts=9007199254740991&message_type=&include_reply_type=none&with_sorted_meta_array=false&include_reactions=false&include_thread_info=false&include_parent_message_info=false&show_subchannel_message_only=false&include_poll_details=true';
+    protected $chat_url = 'https://api-f3cb6187-cb42-4cd1-95fc-1c46f8856006.sendbird.com/v3/group_channels/%s/messages?is_sdk=true&prev_limit=150&next_limit=0&include=false&reverse=false&message_ts=9007199254740991&message_type=&include_reply_type=none&with_sorted_meta_array=false&include_reactions=false&include_thread_info=false&include_parent_message_info=false&show_subchannel_message_only=false&include_poll_details=true';
     protected $send_url = 'https://api-f3cb6187-cb42-4cd1-95fc-1c46f8856006.sendbird.com/v3/group_channels/%s/messages';
     protected $group_url = 'https://api-f3cb6187-cb42-4cd1-95fc-1c46f8856006.sendbird.com/v3/group_channels/%s?show_member=true&show_read_receipt=true&show_delivery_receipt=true';
     protected $accept_offer_url = 'https://www.carousell.sg/ds/api-offer/2.5/offer/%s/accept/?_path=/2.5/offer/%s/accept/';
@@ -111,7 +111,7 @@ class Carousell
 
             $results = ['success' => true, 'messages' => []];
             foreach ($data['messages'] as $chat) {
-                if ($this->isChatValid($chat['type'], $chat['custom_type'])) {
+                //if ($this->isChatValid($chat['type'], $chat['custom_type'])) {
                     $results['messages'][] = [
                         'chat_id' => $chat['message_id'],
                         'message' => $chat['message'] ?? null,
@@ -122,7 +122,7 @@ class Carousell
                         'file' => $chat['file'] ?? [],
                         'created_at' => date('Y-m-d H:i:s', substr($chat['created_at'], 0, -3)),
                     ];
-                }
+                //}
             }
             return $results;
         } catch (\Exception $e) {
