@@ -2,7 +2,8 @@
     <div class="flex justify-center">
         @foreach ($tokens as $token)
         <div class="animate-bounce mx-1 px-2 border border-solid border-transparent rounded-md text-[#78261f] bg-[#fadbd8] border-[#f8ccc8]">
-            Invalid {{ $token->label }}: <span class="text-blue-700">{{ $token->shop->name }}</span>
+            Invalid {{ $token->label }}: 
+            <a wire:click="$dispatch('openModal', { component: 'edit-token', arguments: { shop: {{ $token->shop->id }} }})" class="text-blue-700 cursor-pointer" title="Edit Token">{{ $token->shop->name }}</a>
         </div>
         @endforeach
     </div>

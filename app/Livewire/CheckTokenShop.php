@@ -13,10 +13,12 @@ use LivewireUI\Modal\ModalComponent;
 class CheckTokenShop extends ModalComponent
 {
     public $shop;
+    public $close;
 
-    public function mount(Shop $shop)
+    public function mount(Shop $shop, $close = false)
     {
         $this->shop = $shop;
+        $this->close = $close;
     }
 
     public function checkToken($marketplace, $key)
@@ -52,9 +54,12 @@ class CheckTokenShop extends ModalComponent
 
     public function completed()
     {
-        session()->flash('message', 'Token checking is done.');
-
-        $this->redirectRoute('shop');
+        if ($this->close) {
+            $this->forceClose()->closeModal();
+        } else {
+            session()->flash('message', 'Token checking is done.');
+            $this->redirectRoute('shop');
+        }
     }
 
     public function render()
