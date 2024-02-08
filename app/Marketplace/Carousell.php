@@ -319,6 +319,39 @@ class Carousell
         return $results;
     }
 
+    public function sessionKey($channel_url)
+    {
+        $client = new Client();
+
+        try {
+            $res = $client->request('GET', sprintf($this->chat_url, $channel_url), [
+                'headers' => [
+                    'Cache-Control' => 'no-cache',
+                    'App-Id' => $this->app_id,
+                    'Session-Key' => $this->session_key,
+                ],
+            ]);
+
+            $json = (string) $res->getBody();
+
+            $this->validateSessionKey();
+        } catch (\Exception $e) {
+            $this->validateSessionKey(false);
+        }
+    }
+
+    public function scan()
+    {
+        $inbox = $this->inbox();
+        if ($inbox['success']
+            && isset($inbox['messages'][0])
+            && $url = $inbox['messages'][0]['channel_url']
+        ) {
+            $this->sessionKey($url);
+        }
+        $this->csrfToken();
+    }
+
     protected function getSellerId(Message $message)
     {
         $client = new Client();

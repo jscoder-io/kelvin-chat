@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Marketplace\Factory as MarketplaceFactory;
 use App\Jobs\CsrfToken;
 use App\Jobs\UpdateChat;
 use App\Jobs\UpdateInbox;
@@ -38,7 +39,7 @@ class CheckTokenShop extends ModalComponent
             $token->fill([
                 'status' => $this->checkToken($this->shop->marketplace, $token->key) ? 'valid' : 'invalid'
             ])->save();
-        }*/
+        }
 
         UpdateInbox::dispatch();
 
@@ -47,7 +48,10 @@ class CheckTokenShop extends ModalComponent
             UpdateChat::dispatch($message);
         }
 
-        CsrfToken::dispatch($this->shop);
+        CsrfToken::dispatch($this->shop);*/
+
+        $marketplace = MarketplaceFactory::create($this->shop);
+        $marketplace->scan();
 
         sleep(2);
     }
