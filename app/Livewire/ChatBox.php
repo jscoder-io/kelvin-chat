@@ -8,6 +8,7 @@ use App\Jobs\SendText;
 use App\Jobs\UpdateChat;
 use App\Models\Chat;
 use App\Models\Message;
+use App\Models\Template;
 use Illuminate\Support\Facades\Date;
 use Livewire\Component;
 
@@ -21,6 +22,16 @@ class ChatBox extends Component
         $chat = Chat::where('message_id', $this->message->id);
 
         return $oldest ? $chat->oldest()->get() : $chat->latest()->get();
+    }
+
+    protected function getTemplate()
+    {
+        return Template::latest()->get()->filter(function ($template) {
+            if (in_array($this->message->shop_id, $template->shop)) {
+                return true;
+            }
+            return false;
+        });
     }
 
     protected function makeOfferActions()
@@ -65,6 +76,14 @@ class ChatBox extends Component
         $this->reset('text');
     }
 
+    public function sendTemplate($id)
+    {
+        $template = Template::find($id);
+        if ($template) {
+            SendText::dispatch($this->message->shop, $this->message, $template->message);
+        }
+    }
+
     public function diffForHumansLatestCreatedAt($date)
     {
         return (string) Date::createFromTimeString($date)
@@ -76,6 +95,7 @@ class ChatBox extends Component
         UpdateChat::dispatch($this->message);
 
         return view('livewire.chat-box')
-            ->with('rows', $this->getChat());
+            ->with('rows', $this->getChat())
+            ->with('templates', $this->getTemplate());
     }
 }

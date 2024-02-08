@@ -11,28 +11,56 @@
         </div>
         @if ($form->marketplace == 'carousell.sg')
         <div @class(['flex items-center mb-4', 'p-2 pt-1 bg-red-100 border border-red-400 rounded' => ! $form->valid['jwt-token']])>
-            <div class="w-1/3 font-semibold">{{ __('Jwt Token') }} <span class="text-red-400 align-sub">*</span></div>
+            <div class="w-1/3 font-semibold">
+                <div class="float-left pt-1">{{ __('Jwt Token') }} <span class="text-red-400 align-sub">*</span></div>
+                <div class="float-right pt-1">
+                    <a wire:click="$dispatch('openModal', { component: 'help', arguments: { section: 'jwt-token' }})" class="cursor-pointer focus-visible:outline-none" title="How to get Jwt Token">
+                        <i class="bi bi-question-circle mr-2"></i>
+                    </a>
+                </div>
+            </div>
             <div class="w-2/3 ">
                 <input type="text" wire:model="form.token.jwt-token" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
                 @error('form.token.jwt-token') <span class="text-red-400">{{ $message }}</span> @enderror
             </div>
         </div>
         <div @class(['flex items-center mb-4', 'p-2 pt-1 bg-red-100 border border-red-400 rounded' => ! $form->valid['session-key']])>
-            <div class="w-1/3 font-semibold">{{ __('Session Key') }} <span class="text-red-400 align-sub">*</span></div>
+            <div class="w-1/3 font-semibold">
+                <div class="float-left pt-1">{{ __('Session Key') }} <span class="text-red-400 align-sub">*</span></div>
+                <div class="float-right pt-1">
+                    <a wire:click="$dispatch('openModal', { component: 'help', arguments: { section: 'session-key' }})" class="cursor-pointer focus-visible:outline-none" title="How to get Session Key">
+                        <i class="bi bi-question-circle mr-2"></i>
+                    </a>
+                </div>
+            </div>
             <div class="w-2/3 ">
                 <input type="text" wire:model="form.token.session-key" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
                 @error('form.token.session-key') <span class="text-red-400">{{ $message }}</span> @enderror
             </div>
         </div>
         <div @class(['flex items-center mb-4', 'p-2 pt-1 bg-red-100 border border-red-400 rounded' => ! $form->valid['csrf-token']])>
-            <div class="w-1/3 font-semibold">{{ __('Csrf Token') }} <span class="text-red-400 align-sub">*</span></div>
+            <div class="w-1/3 font-semibold">
+                <div class="float-left pt-1">{{ __('Csrf Token') }} <span class="text-red-400 align-sub">*</span></div>
+                <div class="float-right pt-1">
+                    <a wire:click="$dispatch('openModal', { component: 'help', arguments: { section: 'csrf-token' }})" class="cursor-pointer focus-visible:outline-none" title="How to get Csrf Token">
+                        <i class="bi bi-question-circle mr-2"></i>
+                    </a>
+                </div>
+            </div>
             <div class="w-2/3 ">
                 <input type="text" wire:model="form.token.csrf-token" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
                 @error('form.token.csrf-token') <span class="text-red-400">{{ $message }}</span> @enderror
             </div>
         </div>
         <div @class(['flex items-center mb-4', 'p-2 pt-1 bg-red-100 border border-red-400 rounded' => ! $form->valid['_csrf']])>
-            <div class="w-1/3 font-semibold">{{ __('_csrf') }} <span class="text-red-400 align-sub">*</span></div>
+            <div class="w-1/3 font-semibold">
+                <div class="float-left pt-1">{{ __('_csrf') }} <span class="text-red-400 align-sub">*</span></div>
+                <div class="float-right pt-1">
+                    <a wire:click="$dispatch('openModal', { component: 'help', arguments: { section: '_csrf' }})" class="cursor-pointer focus-visible:outline-none" title="How to get _csrf">
+                        <i class="bi bi-question-circle mr-2"></i>
+                    </a>
+                </div>
+            </div>
             <div class="w-2/3 ">
                 <input type="text" wire:model="form.token._csrf" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
                 @error('form.token._csrf') <span class="text-red-400">{{ $message }}</span> @enderror

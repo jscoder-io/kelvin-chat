@@ -61,6 +61,16 @@
                     </a>
                 </li>
 
+                <hr class="h-0 mx-4 mb-0 border-0 border-t border-[rgba(255,255,255,0.15)]">
+
+                <!-- Nav Item - Template -->
+                <li @class(['relative', 'active' => 'template' == Route::currentRouteName()])>
+                    <a class="block w-56 p-4 text-left text-[rgba(255,255,255,0.8)] hover:text-white" href="{{ route('template') }}">
+                        <i class="bi bi-chat-left-text-fill text-base mr-1"></i>
+                        <span class="block md:inline text-xs md:text-sm">{{ __('Template') }}</span>
+                    </a>
+                </li>
+
                 <hr class="h-0 mx-4 mb-4 border-0 border-t border-[rgba(255,255,255,0.15)]">
 
                 @if (auth()->user()->role < 2)

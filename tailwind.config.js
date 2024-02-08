@@ -6,6 +6,12 @@ export default {
     './storage/framework/views/*.php',
     './resources/views/**/*.blade.php',
   ],
+  safelist: [
+    'md:max-w-xl',
+    'lg:max-w-3xl',
+    'xl:max-w-5xl',
+    '2xl:max-w-7xl',
+  ],
   theme: {
     extend: {},
   },

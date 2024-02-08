@@ -13,6 +13,7 @@ class CreateUserForm extends Form
     public $email = '';
     public $role = '';
     public $shop = [];
+    public $preset = '';
     public $password = '';
     public $password_confirmation = '';
 
@@ -23,6 +24,7 @@ class CreateUserForm extends Form
             'email' => 'required|string|email:rfc,dns|max:225',
             'role' => 'required|integer',
             'shop' => 'required_if:role,2|array',
+            'preset' => 'required|string|max:225',
             'password' => 'required|string|min:6|max:225|confirmed',
             'password_confirmation' => 'required|string|max:225',
         ];
@@ -37,6 +39,8 @@ class CreateUserForm extends Form
             'email.email' => 'The email is invalid.',
             'role.required' => 'The role is required.',
             'shop.required_if' => 'The shop is required.',
+            'preset.required' => 'The preset is required.',
+            'preset.max' => 'The preset is too long.',
             'password.required' => 'The password is required.',
             'password_confirmation.required' => 'The password confirmation is required.',
         ];
@@ -53,6 +57,7 @@ class CreateUserForm extends Form
             'email_verified_at' => Date::now(),
             'role' => $this->role,
             'shop' => ! empty($this->shop) ? $this->shop : null,
+            'preset' => $this->preset,
         ]))->save();
     }
 }

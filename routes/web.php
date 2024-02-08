@@ -4,6 +4,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::get('message', [MessageController::class, 'index'])->name('message');
 
     Route::get('chat/{id}', [ChatController::class, 'index'])->name('chat');
+
+    Route::get('template', [TemplateController::class, 'index'])->name('template');
 
     Route::get('user', [UserController::class, 'index'])->name('user');
 

@@ -82,38 +82,52 @@
             </div>
         </div>
     </div>
-    <div class="w-1/3">
-        <div class="ml-4">
-            <table class="mb-8">
-                <tr>
-                    <td class="font-bold pr-4 align-top">Marketplace</td>
-                    <td>{{ $message->shop->marketplace }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold pr-4 align-top">Shop</td>
-                    <td>{{ $message->shop->name }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold pr-4 align-top">Product</td>
-                    <td>{{ $message->product_title }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold pr-4 align-top">Price</td>
-                    <td>{{ $message->price_formatted }}</td>
-                </tr>
-                <tr>
-                    <td class="font-bold pr-4 align-top">Url</td>
-                    <td>
-                        @if ($message->product_url)
-                        <a href="{{ $message->product_url }}" title="{{ $message->product_url }}" target="_blank">
-                            <span class="text-blue-700">Go to product page <i class="bi bi-link-45deg"></i></span>
-                        </a>
-                        @endif
-                    </td>
-                </tr>
-            </table>
-            <div class="pt-8 border-t border-gray-300">
-                <img class="w-24 h-24 object-cover" src="{{ $message->product_image }}" />
+    <div class="w-1/3 px-4 overflow-y-scroll">
+        <div class="pb-4 overflow-x-scroll">
+            <div class="flex min-w-max">
+                <div class="pr-4">
+                    <img class="w-24 h-24 object-cover" src="{{ $message->product_image }}" />
+                </div>
+                <table class="">
+                    <tr>
+                        <td class="font-bold pr-4 align-top">Marketplace</td>
+                        <td>{{ $message->shop->marketplace }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold pr-4 align-top">Shop</td>
+                        <td>{{ $message->shop->name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold pr-4 align-top">Product</td>
+                        <td>{{ $message->product_title }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold pr-4 align-top">Price</td>
+                        <td>{{ $message->price_formatted }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold pr-4 align-top">Url</td>
+                        <td>
+                            @if ($message->product_url)
+                            <a href="{{ $message->product_url }}" title="{{ $message->product_url }}" target="_blank">
+                                <span class="text-blue-700">Go to product page <i class="bi bi-link-45deg"></i></span>
+                            </a>
+                            @endif
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="mt-2">
+            <div class="flex flex-col">
+                @foreach ($templates as $template)
+                <div class="my-1 p-2 bg-slate-100 hover:bg-slate-200 border border-gray-300 rounded">
+                    <div>{{ $template->message }}</div>
+                    <button wire:click="sendTemplate({{ $template->id }})" type="button" class="mt-1 p-1.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus-visible:outline-none hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        {{ __('Send') }}
+                    </button>
+                </div>
+                @endforeach
             </div>
         </div>
     </div>

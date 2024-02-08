@@ -40,6 +40,13 @@
         </div>
         @endif
         <div class="flex items-center mb-4">
+            <div class="w-1/3 font-semibold">{{ __('Preset') }} <span class="text-red-400 align-sub">*</span></div>
+            <div class="w-2/3 ">
+                <input type="text" wire:model="form.preset" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
+                @error('form.preset') <span class="text-red-400">{{ $message }}</span> @enderror
+            </div>
+        </div>
+        <div class="flex items-center mb-4">
             <div class="w-1/3 font-semibold">{{ __('Password') }} <span class="text-red-400 align-sub">*</span></div>
             <div class="w-2/3 ">
                 <input type="password" wire:model="form.password" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />

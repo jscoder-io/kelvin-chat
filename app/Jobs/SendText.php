@@ -36,6 +36,17 @@ class SendText implements ShouldQueue
     public function handle(): void
     {
         $marketplace = MarketplaceFactory::create($this->shop);
-        $marketplace->send($this->message, $this->text);
+        $marketplace->send($this->message, $this->prependPreset($this->text));
+    }
+
+    protected function prependPreset($text)
+    {
+        if (auth()->user()->role > 0) {
+            if (auth()->user()->preset) {
+                return sprintf('%s: %s', auth()->user()->preset, $text);
+            }
+            return $text;
+        }
+        return sprintf('ADM: %s', $text);
     }
 }

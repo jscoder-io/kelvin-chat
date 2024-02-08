@@ -14,6 +14,7 @@ class EditUserForm extends Form
     public $email = '';
     public $role = '';
     public $shop = [];
+    public $preset = '';
     public $change_password = false;
     public $password = '';
     public $password_confirmation = '';
@@ -26,6 +27,7 @@ class EditUserForm extends Form
         $this->email = $user->email;
         $this->role = $user->role;
         $this->shop = $user->shop ?? [];
+        $this->preset = $user->preset;
     }
 
     public function rules()
@@ -35,6 +37,7 @@ class EditUserForm extends Form
             'email' => 'required|string|email:rfc,dns|max:225',
             'role' => 'required|integer',
             'shop' => 'required_if:role,2|array',
+            'preset' => 'required|string|max:225',
             'password' => 'required_if:change_password,true|string|min:6|max:225|confirmed',
             'password_confirmation' => 'required_if:change_password,true|string|max:225',
         ];
@@ -49,6 +52,8 @@ class EditUserForm extends Form
             'email.email' => 'The email is invalid.',
             'role.required' => 'The role is required.',
             'shop.required_if' => 'The shop is required.',
+            'preset.required' => 'The preset is required.',
+            'preset.max' => 'The preset is too long.',
             'password.required_if' => 'The password is required.',
             'password_confirmation.required_if' => 'The password confirmation is required.',
         ];
@@ -63,6 +68,7 @@ class EditUserForm extends Form
             'email' => $this->email,
             'role' => $this->role,
             'shop' => ! empty($this->shop) ? $this->shop : null,
+            'preset' => $this->preset,
         ]);
 
         if ($this->change_password) {
