@@ -47,7 +47,7 @@
         <div wire:click="chat({{ $message->id }})" class="flex justify-between mb-4 p-4 pl-0 border-b border-gray-300 hover:bg-gray-100 hover:cursor-pointer">
             <div class="w-3/4 pr-4 text-left">
                 <div class="flex">
-                    <img class="w-14 h-14 object-cover" src="{{ $message->product_image }}" />
+                    <img class="w-14 h-14 object-cover" src="{{ $message->product_image_copy ?? $message->product_image }}" />
                     <div class="w-3/4 ml-6">
                         <div class="mb-2">
                             <span class="inline-block text-green-700">{{ $message->username }}</span> 

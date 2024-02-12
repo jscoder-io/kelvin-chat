@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('message:inbox')->everyMinute();
+        $schedule->command('message:download:image')->everyFiveMinutes();
         //$schedule->command('message:chat')->twiceDaily(1, 13);
 
         // $schedule->command('inspire')->hourly();

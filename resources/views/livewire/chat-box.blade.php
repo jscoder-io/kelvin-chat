@@ -18,7 +18,7 @@
             @else
             <div @class(['flex items-end mt-6', 'justify-start' => $row->user == 'buyer', 'justify-end' => $row->user == 'admin'])>
                 @if ($row->user == 'buyer')
-                <img class="w-10 h-10 object-cover" src="{{ $message->profile_image }}" />
+                <img class="w-10 h-10 object-cover" src="{{ $message->profile_image_copy ?? $message->profile_image }}" />
                 @endif
                 <div class="max-w-[15rem] ml-4 px-3 py-2 bg-slate-100 border border-gray-300 rounded-md text-sm">
                     @if ($row->type == 'FILE' && $row->custom_type == 'IMAGE')
@@ -86,7 +86,7 @@
         <div class="pb-4 overflow-x-scroll">
             <div class="flex min-w-max">
                 <div class="pr-4">
-                    <img class="w-24 h-24 object-cover" src="{{ $message->product_image }}" />
+                    <img class="w-24 h-24 object-cover" src="{{ $message->product_image_copy ?? $message->product_image }}" />
                 </div>
                 <table class="">
                     <tr>
