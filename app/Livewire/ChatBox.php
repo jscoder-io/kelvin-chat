@@ -9,6 +9,7 @@ use App\Jobs\UpdateChat;
 use App\Models\Chat;
 use App\Models\Message;
 use App\Models\Template;
+use App\Models\Token;
 use Illuminate\Support\Facades\Date;
 use Livewire\Component;
 
@@ -47,6 +48,29 @@ class ChatBox extends Component
         return false;
     }
 
+    protected function isCsrfTokenValid()
+    {
+        $token = Token::where('key', 'csrf-token')
+            ->where('shop_id', $this->message->shop_id)
+            ->first();
+
+        $csrf_token = true;
+        if ($token) {
+            $csrf_token = $token->status == 'valid';
+        }
+
+        $token = Token::where('key', '_csrf')
+            ->where('shop_id', $this->message->shop_id)
+            ->first();
+
+        $_csrf = true;
+        if ($token) {
+            $_csrf = $token->status == 'valid';
+        }
+
+        return $csrf_token && $_csrf;
+    }
+
     public function mount(Message $message)
     {
         $this->message = $message;
@@ -55,11 +79,19 @@ class ChatBox extends Component
     public function accept()
     {
         AcceptOffer::dispatch($this->message);
+
+        if (! $this->isCsrfTokenValid()) {
+            $this->dispatch('openModal', component: 'edit-token', arguments: ['shop' => $this->message->shop_id]);
+        }
     }
 
     public function decline()
     {
         DeclineOffer::dispatch($this->message);
+
+        if (! $this->isCsrfTokenValid()) {
+            $this->dispatch('openModal', component: 'edit-token', arguments: ['shop' => $this->message->shop_id]);
+        }
     }
 
     public function send()

@@ -2,7 +2,7 @@
     <h1 class="text-xl font-bold mb-4 pb-2 border-b">{{ __('Check Token') }}</h1>
     <div class="mb-4">
         <h3 class="text-base font-bold mb-2">{{ $shop->name }}</h3>
-        @foreach ($shop->tokens as $token)
+        @foreach (\App\Models\Token::where('shop_id', $shop->id)->get() as $token)
         <div class="flex">
             <div class="w-1/3 self-center">{{ $token->label }}</div>
             <div class="w-2/3 self-center" wire:stream="status">
