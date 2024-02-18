@@ -68,6 +68,9 @@ class UpdateChat implements ShouldQueue
         if ($orderData) {
             $this->message->order_data = $orderData;
             $this->message->save();
+        } else {
+            $this->message->order_data = null;
+            $this->message->save();
         }
     }
 }
