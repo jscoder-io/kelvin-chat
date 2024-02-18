@@ -26,11 +26,14 @@ class Message extends Model
         'latest_message',
         'unread_count',
         'data',
+        'order_data',
+        'is_cancelled',
         'latest_created',
     ];
 
     protected $casts = [
         'data' => 'array',
+        'order_data' => 'array',
         'latest_created' => 'datetime',
     ];
 

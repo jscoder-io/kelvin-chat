@@ -66,6 +66,21 @@
                 </div>
             </div>
         @endif
+        @if ($this->orderActions())
+            <div class="flex items-end mt-6 justify-end">
+                <div class="max-w-[15rem] ml-4 px-3 py-2 bg-slate-100 border border-gray-300 rounded-md text-sm">
+                    <div class="text-right">{{ __('Do you want to Accept or Cancel this order?') }}</div>
+                    <div class="mt-4 flex justify-end">
+                        <button wire:click="acceptOrder" type="button" class="px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus-visible:outline-none hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            {{ __('Accept') }}
+                        </button>
+                        <button wire:click="cancelOrder" type="button" class="ml-4 px-4 py-2.5 bg-gray-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus-visible:outline-none hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            {{ __('Cancel') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
         </div>
         <div class="flex justify-between">
             <div class="grow">

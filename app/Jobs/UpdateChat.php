@@ -63,5 +63,11 @@ class UpdateChat implements ShouldQueue
                 }
             }
         }
+
+        $orderData = $marketplace->orderData($this->message);
+        if ($orderData) {
+            $this->message->order_data = $orderData;
+            $this->message->save();
+        }
     }
 }

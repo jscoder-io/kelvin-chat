@@ -25,6 +25,8 @@ class Carousell
     protected $group_url = 'https://api-f3cb6187-cb42-4cd1-95fc-1c46f8856006.sendbird.com/v3/group_channels/%s?show_member=true&show_read_receipt=true&show_delivery_receipt=true';
     protected $accept_offer_url = 'https://www.carousell.sg/ds/api-offer/2.5/offer/%s/accept/?_path=/2.5/offer/%s/accept/';
     protected $decline_offer_url = 'https://www.carousell.sg/ds/api-offer/2.1/offer/%s/decline/?_path=/2.1/offer/%s/decline/';
+    protected $accept_order_url = 'https://www.carousell.sg/ds/order/2.0/orders/%s/deliver/?_path=/2.0/orders/%s/deliver/';
+    protected $cancel_order_url = 'https://www.carousell.sg/ds/order/2.0/orders/%s/cancel/?_path=/2.0/orders/%s/cancel/';
 
     protected $app_id = 'F3CB6187-CB42-4CD1-95FC-1C46F8856006';
 
@@ -352,6 +354,94 @@ class Carousell
         $this->csrfToken();
     }
 
+    public function orderData(Message $message)
+    {
+        $response = $this->setAsRead($message->chat_id);
+        if ($response === false) {
+            return $response;
+        }
+        return $response['data']['order'];
+    }
+
+    public function acceptOrder(Message $message)
+    {
+        $client = new Client();
+
+        $jar = CookieJar::fromArray(['jwt' => $this->jwt_token, '_csrf' => $this->_csrf], 'www.carousell.sg');
+
+        $results = ['success' => false, 'data' => []];
+
+        try {
+            $res = $client->request('POST', sprintf($this->accept_order_url, $message->order_data['id'], $message->order_data['id']), [
+                'headers' => [
+                    'Cache-Control' => 'no-cache',
+                    'Csrf-Token'    => $this->csrf_token,
+                    'Z-Use-Form'    => true,
+                    'Content-Type'  => 'application/json',
+                    'User-Agent'    => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+                ],
+                'json' => [
+                    'courier_type'  => 'other',
+                    'force'         => true,
+                    'tracking_code' => 'tracking',
+                ],
+                'cookies' => $jar
+            ]);
+        } catch (\Exception $e) {
+            $this->validateCsrfToken(false);
+            return $results;
+        }
+
+        if ($res->getStatusCode() == '200') {
+            $json = (string) $res->getBody();
+            $data = Utils::jsonDecode($json, true);
+
+            $results = ['success' => true, 'data' => $data];
+            $this->validateCsrfToken();
+        }
+
+        return $results;
+    }
+
+    public function cancelOrder(Message $message)
+    {
+        $client = new Client();
+
+        $jar = CookieJar::fromArray(['jwt' => $this->jwt_token, '_csrf' => $this->_csrf], 'www.carousell.sg');
+
+        $results = ['success' => false, 'data' => []];
+
+        try {
+            $res = $client->request('POST', sprintf($this->cancel_order_url, $message->order_data['id'], $message->order_data['id']), [
+                'headers' => [
+                    'Cache-Control' => 'no-cache',
+                    'Csrf-Token'    => $this->csrf_token,
+                    'Z-Use-Form'    => true,
+                    'Content-Type'  => 'application/json',
+                    'User-Agent'    => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+                ],
+                'json' => [
+                    'detail' => 'Other reasons',
+                    'reason' => 6,
+                ],
+                'cookies' => $jar
+            ]);
+        } catch (\Exception $e) {
+            $this->validateCsrfToken(false);
+            return $results;
+        }
+
+        if ($res->getStatusCode() == '200') {
+            $json = (string) $res->getBody();
+            $data = Utils::jsonDecode($json, true);
+
+            $results = ['success' => true, 'data' => $data];
+            $this->validateCsrfToken();
+        }
+
+        return $results;
+    }
+
     protected function getSellerId(Message $message)
     {
         $client = new Client();
@@ -394,10 +484,12 @@ class Carousell
                 'cookies' => $jar
             ]);
             $this->validateJwtToken();
-            return (string) $res->getBody();
+
+            $json = (string) $res->getBody();
+            return Utils::jsonDecode($json, true);
         } catch (\Exception $e) {
             $this->validateJwtToken(false);
-            return '';
+            return false;
         }
     }
 

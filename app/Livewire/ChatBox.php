@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Jobs\AcceptOffer;
+use App\Jobs\AcceptOrder;
+use App\Jobs\CancelOrder;
 use App\Jobs\DeclineOffer;
 use App\Jobs\SendText;
 use App\Jobs\UpdateChat;
@@ -46,6 +48,15 @@ class ChatBox extends Component
             }
         }
         return false;
+    }
+
+    protected function orderActions()
+    {
+        if (! empty($this->message->order_data)
+            && $this->message->order_data['state'] == 'FULFILLMENT_ORDER_STATE_INIT'
+        ) {
+            return true;
+        }
     }
 
     protected function isCsrfTokenValid()
@@ -92,6 +103,30 @@ class ChatBox extends Component
         if (! $this->isCsrfTokenValid()) {
             $this->dispatch('openModal', component: 'edit-token', arguments: ['shop' => $this->message->shop_id]);
         }
+    }
+
+    public function acceptOrder()
+    {
+        AcceptOrder::dispatch($this->message);
+
+        if (! $this->isCsrfTokenValid()) {
+            $this->dispatch('openModal', component: 'edit-token', arguments: ['shop' => $this->message->shop_id]);
+            return;
+        }
+
+        $this->message->update(['is_cancelled' => 0]);
+    }
+
+    public function cancelOrder()
+    {
+        CancelOrder::dispatch($this->message);
+
+        if (! $this->isCsrfTokenValid()) {
+            $this->dispatch('openModal', component: 'edit-token', arguments: ['shop' => $this->message->shop_id]);
+            return;
+        }
+
+        $this->message->update(['is_cancelled' => 1]);
     }
 
     public function send()
