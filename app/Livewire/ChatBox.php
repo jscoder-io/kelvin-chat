@@ -9,10 +9,12 @@ use App\Jobs\DeclineOffer;
 use App\Jobs\SendText;
 use App\Jobs\UpdateChat;
 use App\Models\Chat;
+use App\Models\ChatQueue;
 use App\Models\Message;
 use App\Models\Template;
 use App\Models\Token;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class ChatBox extends Component
@@ -82,6 +84,23 @@ class ChatBox extends Component
         return $csrf_token && $_csrf;
     }
 
+    protected function sendChatQueue()
+    {
+        $chat = ChatQueue::where('chat_id', $this->message->id)
+            ->where('is_sent', 0)->orderBy('created_at', 'asc')
+            ->get('message')->map(function ($model) {
+                return $model->message;
+            })->implode("\n");
+
+        if ($chat) {
+            DB::table('chat_queue')
+                ->where('chat_id', $this->message->id)
+                ->update(['is_sent' => true]);
+
+            SendText::dispatch($this->message->shop, $this->message, $chat);
+        }
+    }
+
     public function mount(Message $message)
     {
         $this->message = $message;
@@ -131,16 +150,22 @@ class ChatBox extends Component
 
     public function send()
     {
-        $this->resetValidation('text');
+        //$this->resetValidation('text');
 
         if (! isset($this->text) || $this->text == '') {
-            $this->addError('text', 'Text message is required.');
+            //$this->addError('text', 'Text message is required.');
             return;
         }
 
-        SendText::dispatch($this->message->shop, $this->message, $this->text);
+        //SendText::dispatch($this->message->shop, $this->message, $this->text);
+
+        ChatQueue::create([
+            'chat_id' => $this->message->id,
+            'message' => $this->text,
+        ]);
 
         $this->reset('text');
+        $this->skipRender();
     }
 
     public function sendTemplate($id)
@@ -159,6 +184,8 @@ class ChatBox extends Component
 
     public function render()
     {
+        $this->sendChatQueue();
+
         UpdateChat::dispatch($this->message);
 
         return view('livewire.chat-box')

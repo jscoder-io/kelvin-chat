@@ -32,7 +32,8 @@
                     @elseif ($row->type == 'MESG' && $row->custom_type == 'DECLINE_OFFER')
                     {{ $row->message }} <br /> <span class="font-bold">{{ $row->data['currency_symbol'] }}{{ round($row->data['offer_amount']) }}</span>
                     @else
-                    {{ $row->message }}
+                        @php $arrMsg = explode("\n", $row->message) @endphp
+                        {!! implode("<br />", $arrMsg) !!}
                     @endif
                 </div>
             </div>
@@ -84,14 +85,15 @@
         </div>
         <div class="flex justify-between">
             <div class="grow">
-                <input wire:model="text" type="text" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
+                <!--<input wire:model="text" wire:keydown.enter="send" @keydown.enter="$el.value = ''" type="text" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />-->
+                <textarea x-ref="text" wire:model="text" wire:keydown.ctrl.s.prevent="send" @keydown.ctrl.s.prevent="$el.value = ''" rows="3" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm"></textarea>
                 @error('text') <span class="text-red-400">{{ $message }}</span> @enderror
             </div>
             <div class="pl-2">
                 <div wire:click="$dispatch('openModal', { component: 'chat-box-upload', arguments: { message: {{ $message->id }} }})" class="inline-block">
                     <i class="bi bi-upload ml-2 cursor-pointer" title="Upload"></i>
                 </div>
-                <button wire:click="send" type="button" class="inline-flex items-center mt-1 ml-4 px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus-visible:outline-none hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                <button wire:click="send" @click="$refs.text.value = ''" type="button" class="inline-flex items-center mt-1 ml-4 px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus-visible:outline-none hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     {{ __('Send') }}
                 </button>
             </div>
