@@ -86,7 +86,7 @@
         <div class="flex justify-between">
             <div class="grow">
                 <!--<input wire:model="text" wire:keydown.enter="send" @keydown.enter="$el.value = ''" type="text" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />-->
-                <textarea x-ref="text" wire:model="text" wire:keydown.ctrl.s.prevent="send" @keydown.ctrl.s.prevent="$el.value = ''" rows="3" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm"></textarea>
+                <textarea x-ref="text" wire:model="text" wire:keydown.enter.prevent="send" @keydown.enter.prevent="$el.value = ''" rows="3" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm"></textarea>
                 @error('text') <span class="text-red-400">{{ $message }}</span> @enderror
             </div>
             <div class="pl-2">
