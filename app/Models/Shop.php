@@ -24,4 +24,14 @@ class Shop extends Model
     {
         return $this->hasMany(Token::class);
     }
+
+    public function isJwtTokenValid()
+    {
+        foreach ($this->tokens as $token) {
+            if ($token->key == 'jwt-token' && $token->status == 'valid') {
+                return true;
+            }
+        }
+        return false;
+    }
 }

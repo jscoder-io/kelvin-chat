@@ -28,26 +28,33 @@ class UpdateOrder extends Command
      */
     public function handle()
     {
-        Message::where('data->is_product_sold', true)->whereNull('order_detail')
-            ->orderBy('latest_created', 'desc')->limit(1)
-            ->get()->each(function ($message) {
-                $shop = Shop::findOrFail($message->shop_id);
-                $marketplace = MarketplaceFactory::create($shop);
-                $order = $marketplace->orderData($message, false);
-                if ($orderId = $order['id']) {
-                    $orderDetail = $marketplace->orderDetail($orderId);
-                    if ($orderDetail['success']) {
-                        $saved = Message::findOrFail($message->id);
-                        $saved->order_id = $orderId; //string
-                        $saved->order_detail = $orderDetail['array']; //json
-                        $saved->order_total = $this->extractOrderTotal($orderDetail['array']); //json
-                        $saved->order_address = $this->extractOrderAddress($orderDetail['array']); //string
-                        $saved->order_contact = $this->extractOrderContact($orderDetail['array']); //string
-                        $saved->order_customer = $this->extractOrderCustomer($orderDetail['array']); //string
-                        $saved->save();
+        Shop::get()->each(function ($shop) {
+            Message::where('data->is_product_sold', true)
+                ->where('shop_id', $shop->id)
+                ->whereNull('order_detail')
+                ->orderBy('latest_created', 'desc')
+                ->limit(1)->get()
+                ->whenNotEmpty(function ($collection) use ($shop) {
+                    if ($shop->isJwtTokenValid()) {
+                        $message = $collection->first();
+                        $marketplace = MarketplaceFactory::create($shop);
+                        $order = $marketplace->orderData($message, false);
+                        if ($order && $orderId = $order['id']) {
+                            $orderDetail = $marketplace->orderDetail($orderId);
+                            if ($orderDetail['success']) {
+                                $saved = Message::findOrFail($message->id);
+                                $saved->order_id = $orderId; //string
+                                $saved->order_detail = $orderDetail['array']; //json
+                                $saved->order_total = $this->extractOrderTotal($orderDetail['array']); //json
+                                $saved->order_address = $this->extractOrderAddress($orderDetail['array']); //string
+                                $saved->order_contact = $this->extractOrderContact($orderDetail['array']); //string
+                                $saved->order_customer = $this->extractOrderCustomer($orderDetail['array']); //string
+                                $saved->save();
+                            }
+                        }
                     }
-                }
-            });
+                });
+        });
     }
 
     protected function extractOrderTotal(array $data = [])
