@@ -35,16 +35,16 @@
         </div>
         <div class="flex items-center mb-4">
             <div class="w-1/3 font-semibold">
-                <div class="float-left pt-1">{{ __('Session Key') }} <span class="text-red-400 align-sub">*</span></div>
+                <div class="float-left pt-1">{{ __('_csrf') }} <span class="text-red-400 align-sub">*</span></div>
                 <div class="float-right pt-1">
-                    <a wire:click="$dispatch('openModal', { component: 'help', arguments: { section: 'session-key' }})" class="cursor-pointer focus-visible:outline-none" title="How to get Session Key">
+                    <a wire:click="$dispatch('openModal', { component: 'help', arguments: { section: '_csrf' }})" class="cursor-pointer focus-visible:outline-none" title="How to get _csrf">
                         <i class="bi bi-question-circle mr-2"></i>
                     </a>
                 </div>
             </div>
             <div class="w-2/3 ">
-                <input type="text" wire:model="form.token.session-key" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
-                @error('form.token.session-key') <span class="text-red-400">{{ $message }}</span> @enderror
+                <input type="text" wire:model="form.token._csrf" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
+                @error('form.token._csrf') <span class="text-red-400">{{ $message }}</span> @enderror
             </div>
         </div>
         <div class="flex items-center mb-4">
@@ -63,16 +63,16 @@
         </div>
         <div class="flex items-center mb-4">
             <div class="w-1/3 font-semibold">
-                <div class="float-left pt-1">{{ __('_csrf') }} <span class="text-red-400 align-sub">*</span></div>
+                <div class="float-left pt-1">{{ __('Session Key') }} <span class="text-red-400 align-sub">*</span></div>
                 <div class="float-right pt-1">
-                    <a wire:click="$dispatch('openModal', { component: 'help', arguments: { section: '_csrf' }})" class="cursor-pointer focus-visible:outline-none" title="How to get _csrf">
+                    <a wire:click="$dispatch('openModal', { component: 'help', arguments: { section: 'session-key' }})" class="cursor-pointer focus-visible:outline-none" title="How to get Session Key">
                         <i class="bi bi-question-circle mr-2"></i>
                     </a>
                 </div>
             </div>
             <div class="w-2/3 ">
-                <input type="text" wire:model="form.token._csrf" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
-                @error('form.token._csrf') <span class="text-red-400">{{ $message }}</span> @enderror
+                <input type="text" wire:model="form.token.session-key" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />
+                @error('form.token.session-key') <span class="text-red-400">{{ $message }}</span> @enderror
             </div>
         </div>
         @endif

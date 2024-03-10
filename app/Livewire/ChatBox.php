@@ -15,6 +15,7 @@ use App\Models\Template;
 use App\Models\Token;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ChatBox extends Component
@@ -168,11 +169,27 @@ class ChatBox extends Component
         $this->skipRender();
     }
 
+    #[On('send-message')]
+    public function sendMessage($text)
+    {
+        if (is_null($text) || $text == '') {
+            return;
+        }
+
+        ChatQueue::create([
+            'chat_id' => $this->message->id,
+            'message' => $text,
+        ]);
+
+        $this->skipRender();
+    }
+
     public function sendTemplate($id)
     {
         $template = Template::find($id);
         if ($template) {
-            SendText::dispatch($this->message->shop, $this->message, $template->message);
+            //SendText::dispatch($this->message->shop, $this->message, $template->message);
+            $this->sendMessage($template->message);
         }
     }
 

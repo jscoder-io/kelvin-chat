@@ -27,13 +27,22 @@ class Message extends Model
         'unread_count',
         'data',
         'order_data',
+        'order_id',
+        'order_detail',
+        'order_total',
+        'order_address',
+        'order_contact',
+        'order_customer',
         'is_cancelled',
+        'is_seller',
         'latest_created',
     ];
 
     protected $casts = [
         'data' => 'array',
         'order_data' => 'array',
+        'order_detail' => 'array',
+        'order_total' => 'array',
         'latest_created' => 'datetime',
     ];
 

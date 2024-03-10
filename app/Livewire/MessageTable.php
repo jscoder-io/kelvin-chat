@@ -59,8 +59,13 @@ class MessageTable extends Component
                         ->whereRaw('`chat`.`message` LIKE \'%'.$this->filters['search'].'%\'');
                 });
                 $query->orWhere('username', 'LIKE', '%'.$this->filters['search'].'%');
+                $query->orWhere('order_id', 'LIKE', '%'.$this->filters['search'].'%');
+                $query->orWhere('order_address', 'LIKE', '%'.$this->filters['search'].'%');
+                $query->orWhere('order_contact', 'LIKE', '%'.$this->filters['search'].'%');
+                $query->orWhere('order_customer', 'LIKE', '%'.$this->filters['search'].'%');
             });
         }
+        $messages->where('is_seller', '!=', 1);
 
         return $messages->get();
     }

@@ -5,5 +5,5 @@
             {{ __('Close') }}
         </button>
     </div>
-    <img src="{{ url('images/help/session-key.png') }}" />
+    <img src="{{ url('images/help/session-key.jpg') }}" />
 </div>

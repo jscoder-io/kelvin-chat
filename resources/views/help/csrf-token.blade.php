@@ -5,5 +5,5 @@
             {{ __('Close') }}
         </button>
     </div>
-    <img src="{{ url('images/help/csrf-token.png') }}" />
+    <img src="{{ url('images/help/csrf-token.jpg') }}" />
 </div>

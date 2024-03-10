@@ -20,6 +20,7 @@ class Carousell
 
     protected $inbox_url = 'https://www.carousell.sg/ds/offer/1.0/me/?_path=/1.0/me/&count=100&type=all';
     protected $read_url = 'https://www.carousell.sg/ds/api-offer/2.7/offer/%s/?_path=/2.7/offer/%s/&fetch_dispute=1&mark_as_read=true';
+    protected $noread_url = 'https://www.carousell.sg/ds/api-offer/2.7/offer/%s/?_path=/2.7/offer/%s/&fetch_dispute=1&mark_as_read=false';
     protected $chat_url = 'https://api-f3cb6187-cb42-4cd1-95fc-1c46f8856006.sendbird.com/v3/group_channels/%s/messages?is_sdk=true&prev_limit=150&next_limit=0&include=false&reverse=false&message_ts=9007199254740991&message_type=&include_reply_type=none&with_sorted_meta_array=false&include_reactions=false&include_thread_info=false&include_parent_message_info=false&show_subchannel_message_only=false&include_poll_details=true';
     protected $send_url = 'https://api-f3cb6187-cb42-4cd1-95fc-1c46f8856006.sendbird.com/v3/group_channels/%s/messages';
     protected $group_url = 'https://api-f3cb6187-cb42-4cd1-95fc-1c46f8856006.sendbird.com/v3/group_channels/%s?show_member=true&show_read_receipt=true&show_delivery_receipt=true';
@@ -27,6 +28,7 @@ class Carousell
     protected $decline_offer_url = 'https://www.carousell.sg/ds/api-offer/2.1/offer/%s/decline/?_path=/2.1/offer/%s/decline/';
     protected $accept_order_url = 'https://www.carousell.sg/ds/order/2.0/orders/%s/deliver/?_path=/2.0/orders/%s/deliver/';
     protected $cancel_order_url = 'https://www.carousell.sg/ds/order/2.0/orders/%s/cancel/?_path=/2.0/orders/%s/cancel/';
+    protected $order_url = 'https://www.carousell.sg/aps/fg/2.0/orders/%s/';
 
     protected $app_id = 'F3CB6187-CB42-4CD1-95FC-1C46F8856006';
 
@@ -93,7 +95,8 @@ class Carousell
 
     public function chat(Message $message)
     {
-        $this->setAsRead($message->chat_id);
+        //$this->setAsRead($message->chat_id);
+        $order = $this->orderData($message);
 
         $client = new Client();
 
@@ -111,7 +114,7 @@ class Carousell
 
             $this->validateSessionKey();
 
-            $results = ['success' => true, 'messages' => []];
+            $results = ['success' => true, 'messages' => [], 'order' => $order];
             foreach ($data['messages'] as $chat) {
                 //if ($this->isChatValid($chat['type'], $chat['custom_type'])) {
                     $results['messages'][] = [
@@ -129,7 +132,7 @@ class Carousell
             return $results;
         } catch (\Exception $e) {
             $this->validateSessionKey(false);
-            return ['success' => false, 'messages' => []];
+            return ['success' => false, 'messages' => [], 'order' => $order];
         }
     }
 
@@ -354,13 +357,49 @@ class Carousell
         $this->csrfToken();
     }
 
-    public function orderData(Message $message)
+    public function orderData(Message $message, $asRead = true)
     {
-        $response = $this->setAsRead($message->chat_id);
+        $response = $this->setAsRead($message->chat_id, $asRead);
         if ($response === false) {
             return $response;
         }
         return $response['data']['order'];
+    }
+
+    public function orderDetail($orderId)
+    {
+        $client = new Client();
+
+        $jar = CookieJar::fromArray(['jwt' => $this->jwt_token], 'www.carousell.sg');
+
+        $results = ['success' => false, 'json' => null, 'array' => []];
+
+        try {
+            $res = $client->request('GET', sprintf($this->order_url, $orderId), [
+                'headers' => [
+                    'Cache-Control' => 'no-cache',
+                    'Content-Type'  => 'application/json',
+                    'User-Agent'    => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+                ],
+                'cookies' => $jar
+            ]);
+        } catch (\Exception $e) {
+            $this->validateJwtToken(false);
+            return $results;
+        }
+
+        if ($res->getStatusCode() == '200') {
+            $json = (string) $res->getBody();
+            $data = Utils::jsonDecode($json, true);
+
+            $results['success'] = true;
+            $results['json'] = $json;
+            $results['array'] = $data;
+
+            $this->validateJwtToken();
+        }
+
+        return $results;
     }
 
     public function acceptOrder(Message $message)
@@ -442,7 +481,17 @@ class Carousell
         return $results;
     }
 
-    protected function getSellerId(Message $message)
+    public function getSellerIdByToken()
+    {
+        $str = base64_decode($this->jwt_token);
+        $parts = explode('}', $str);
+        $parts = explode(',', $parts[1]);
+        $parts = explode(':', $parts[0]);
+
+        return str_replace('"', '', $parts[1]);
+    }
+
+    public function getSellerId(Message $message)
     {
         $client = new Client();
 
@@ -468,14 +517,14 @@ class Carousell
         }
     }
 
-    protected function setAsRead($chat_id)
+    protected function setAsRead($chat_id, $asRead = true)
     {
         $client = new Client();
 
         $jar = CookieJar::fromArray(['jwt' => $this->jwt_token], 'www.carousell.sg');
 
         try {
-            $res = $client->request('GET', sprintf($this->read_url, $chat_id, $chat_id), [
+            $res = $client->request('GET', sprintf($asRead ? $this->read_url : $this->noread_url, $chat_id, $chat_id), [
                 'headers' => [
                     'Cache-Control' => 'no-cache',
                     'Content-Type'  => 'application/json',
