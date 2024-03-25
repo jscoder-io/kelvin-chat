@@ -29,6 +29,7 @@ class Carousell
     protected $accept_order_url = 'https://www.carousell.sg/ds/order/2.0/orders/%s/deliver/?_path=/2.0/orders/%s/deliver/';
     protected $cancel_order_url = 'https://www.carousell.sg/ds/order/2.0/orders/%s/cancel/?_path=/2.0/orders/%s/cancel/';
     protected $order_url = 'https://www.carousell.sg/aps/fg/2.0/orders/%s/';
+    protected $orders_url = 'https://www.carousell.sg/aps/fg/2.0/orders/';
 
     protected $app_id = 'F3CB6187-CB42-4CD1-95FC-1C46F8856006';
 
@@ -95,8 +96,8 @@ class Carousell
 
     public function chat(Message $message)
     {
-        //$this->setAsRead($message->chat_id);
-        $order = $this->orderData($message);
+        $this->setAsRead($message->chat_id);
+        //$order = $this->orderData($message);
 
         $client = new Client();
 
@@ -114,7 +115,8 @@ class Carousell
 
             $this->validateSessionKey();
 
-            $results = ['success' => true, 'messages' => [], 'order' => $order];
+            //$results = ['success' => true, 'messages' => [], 'order' => $order];
+            $results = ['success' => true, 'messages' => []];
             foreach ($data['messages'] as $chat) {
                 //if ($this->isChatValid($chat['type'], $chat['custom_type'])) {
                     $results['messages'][] = [
@@ -132,7 +134,8 @@ class Carousell
             return $results;
         } catch (\Exception $e) {
             $this->validateSessionKey(false);
-            return ['success' => false, 'messages' => [], 'order' => $order];
+            //return ['success' => false, 'messages' => [], 'order' => $order];
+            return ['success' => false, 'messages' => []];
         }
     }
 
@@ -357,6 +360,50 @@ class Carousell
         $this->csrfToken();
     }
 
+    public function orders($type)
+    {
+        $client = new Client();
+
+        $jar = CookieJar::fromArray(['jwt' => $this->jwt_token, '_csrf' => $this->_csrf], 'www.carousell.sg');
+
+        $results = ['success' => false, 'response' => null, 'data' => []];
+
+        try {
+            $res = $client->request('POST', $this->orders_url, [
+                'headers' => [
+                    'Cache-Control' => 'no-cache',
+                    'Csrf-Token'    => $this->csrf_token,
+                    'Content-Type'  => 'application/json',
+                    'User-Agent'    => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+                ],
+                'json' => [
+                    'page' => 'MY_SALES',
+                    'pageSize' => 100,
+                    'tab' => strtoupper($type),
+                    'countryCode' => '',
+                    'userId' => 0,
+                ],
+                'cookies' => $jar
+            ]);
+        } catch (\Exception $e) {
+            $this->validateCsrfToken(false);
+            return $results;
+        }
+
+        if ($res->getStatusCode() == '200') {
+            $json = (string) $res->getBody();
+            $data = Utils::jsonDecode($json, true);
+
+            $results['success'] = true;
+            $results['response'] = $json;
+            $results['data'] = $data;
+
+            $this->validateCsrfToken();
+        }
+
+        return $results;
+    }
+
     public function orderData(Message $message, $asRead = true)
     {
         $response = $this->setAsRead($message->chat_id, $asRead);
@@ -479,6 +526,30 @@ class Carousell
         }
 
         return $results;
+    }
+
+    public function offerDetail($chat_id)
+    {
+        $offer = $this->setAsRead($chat_id, false);
+        if ($offer === false) {
+            return [];
+        }
+
+        return [
+            'chat_id' => $chat_id,
+            'buyer_id' => $offer['data']['user']['id'],
+            'username' => $offer['data']['user']['username'],
+            'profile_image' => $offer['data']['user']['profile']['image_url'],
+            'product_title' => $offer['data']['product']['title'],
+            'product_image' => $offer['data']['product']['primary_photo_url'],
+            'price_formatted' => sprintf('%s%s', $offer['data']['currency_symbol'], $offer['data']['product']['price_formatted']),
+            'product_url' => $this->getProductUrl($offer['data']),
+            'channel_url' => $offer['data']['channel_url'],
+            'latest_message' => $offer['data']['latest_price_message'],
+            'unread_count' => $offer['data']['unread_count'],
+            'latest_created' => $offer['data']['latest_price_created'],
+            'data' => $offer['data'],
+        ];
     }
 
     public function getSellerIdByToken()

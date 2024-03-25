@@ -58,11 +58,14 @@ class MessageTable extends Component
                     $subquery->select('message_id')->from('chat')
                         ->whereRaw('`chat`.`message` LIKE \'%'.$this->filters['search'].'%\'');
                 });
+                $query->orWhereIn('id', function (Builder $subquery) {
+                    $subquery->select('message_id')->from('orders')
+                        ->whereRaw('`orders`.`identifier` LIKE \'%'.$this->filters['search'].'%\'')
+                        ->orWhereRaw('`orders`.`customer` LIKE \'%'.$this->filters['search'].'%\'')
+                        ->orWhereRaw('`orders`.`contact` LIKE \'%'.$this->filters['search'].'%\'')
+                        ->orWhereRaw('`orders`.`address` LIKE \'%'.$this->filters['search'].'%\'');
+                });
                 $query->orWhere('username', 'LIKE', '%'.$this->filters['search'].'%');
-                $query->orWhere('order_id', 'LIKE', '%'.$this->filters['search'].'%');
-                $query->orWhere('order_address', 'LIKE', '%'.$this->filters['search'].'%');
-                $query->orWhere('order_contact', 'LIKE', '%'.$this->filters['search'].'%');
-                $query->orWhere('order_customer', 'LIKE', '%'.$this->filters['search'].'%');
             });
         }
         $messages->where('is_seller', '!=', 1);

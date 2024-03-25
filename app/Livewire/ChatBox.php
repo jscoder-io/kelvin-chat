@@ -55,8 +55,8 @@ class ChatBox extends Component
 
     protected function orderActions()
     {
-        if (! empty($this->message->order_data)
-            && $this->message->order_data['state'] == 'FULFILLMENT_ORDER_STATE_INIT'
+        if (! empty($this->message->order_status)
+            && $this->message->order_status == 'to_start'
         ) {
             return true;
         }
@@ -109,6 +109,8 @@ class ChatBox extends Component
 
     public function accept()
     {
+        $this->skipRender();
+
         AcceptOffer::dispatch($this->message);
 
         if (! $this->isCsrfTokenValid()) {
@@ -118,6 +120,8 @@ class ChatBox extends Component
 
     public function decline()
     {
+        $this->skipRender();
+
         DeclineOffer::dispatch($this->message);
 
         if (! $this->isCsrfTokenValid()) {
@@ -127,6 +131,8 @@ class ChatBox extends Component
 
     public function acceptOrder()
     {
+        $this->skipRender();
+
         AcceptOrder::dispatch($this->message);
 
         if (! $this->isCsrfTokenValid()) {
@@ -134,11 +140,13 @@ class ChatBox extends Component
             return;
         }
 
-        $this->message->update(['is_cancelled' => 0]);
+        $this->message->update(['order_status' => 'in_progress']);
     }
 
     public function cancelOrder()
     {
+        $this->skipRender();
+
         CancelOrder::dispatch($this->message);
 
         if (! $this->isCsrfTokenValid()) {
@@ -146,7 +154,7 @@ class ChatBox extends Component
             return;
         }
 
-        $this->message->update(['is_cancelled' => 1]);
+        $this->message->update(['order_status' => 'cancelled']);
     }
 
     public function send()

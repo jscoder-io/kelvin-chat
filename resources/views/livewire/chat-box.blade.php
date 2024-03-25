@@ -134,7 +134,7 @@
                             @endif
                         </td>
                     </tr>
-                    @if (! empty($message->order_total))
+                    @if (count($message->orders) > 0)
                     <tr>
                         <td class="font-bold pr-4 align-top">Order</td>
                         <td>

@@ -63,7 +63,12 @@ class UpdateChat implements ShouldQueue
                 }
             }
 
-            if ($data['order']) {
+            $offerDetail = $marketplace->offerDetail($this->message->chat_id);
+            if (! empty($offerDetail)) {
+                $this->message->update(['data' => $offerDetail['data']]);
+            }
+
+            /*if ($data['order']) {
                 $this->message->order_id = $data['order']['id'] ?? null;
                 $this->message->order_data = $data['order'];
                 $this->message->save();
@@ -71,7 +76,7 @@ class UpdateChat implements ShouldQueue
                 $this->message->order_id = null;
                 $this->message->order_data = null;
                 $this->message->save();
-            }
+            }*/
         }
     }
 }
