@@ -12,10 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-//        $schedule->command('message:inbox')->everyMinute();
-//        $schedule->command('message:seller-id')->everyMinute();
-//        $schedule->command('message:order-data')->everyMinute();
-//        $schedule->command('message:order')->everyFiveMinutes();
+        $schedule->command('message:inbox')->everyMinute();
+        $schedule->command('message:seller-id')->everyMinute();
+        $schedule->command('message:order-data')->everyMinute();
+        $schedule->command('message:order')->everyFiveMinutes();
         //$schedule->command('message:download:image')->everyFiveMinutes();
         //$schedule->command('message:chat')->twiceDaily(1, 13);
 
