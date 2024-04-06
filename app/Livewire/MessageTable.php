@@ -14,9 +14,11 @@ class MessageTable extends Component
 {
     public $filters = [
         'shop' => 0,
-        'unread' => 0,
+        'type' => 0,
         'search' => '',
     ];
+
+    public $selected = [];
 
     public $offset = 0;
 
@@ -49,9 +51,14 @@ class MessageTable extends Component
             $shopIds = count($shops) > 0 ? $shops : [0];
             $messages->whereIn('shop_id', $shopIds);
         }
-        if ($this->filters['unread']) {
+
+        $isArchived = 0;
+        if ($this->filters['type'] == 1) {
             $messages->where('unread_count', '>', 0);
+        } elseif ($this->filters['type'] == 2) {
+            $isArchived = 1;
         }
+
         if ($this->filters['search']) {
             $messages->where(function ($query) {
                 $query->whereIn('id', function (Builder $subquery) {
@@ -69,6 +76,7 @@ class MessageTable extends Component
             });
         }
         $messages->where('is_seller', '!=', 1);
+        $messages->where('is_archived', $isArchived);
 
         return $messages->get();
     }
@@ -92,21 +100,34 @@ class MessageTable extends Component
     public function updatedFilters($value, $key)
     {
         $this->reset('offset');
+        $this->reset('selected');
     }
 
     public function prev()
     {
         $this->offset -= 30;
+        $this->reset('selected');
     }
 
     public function next()
     {
         $this->offset += 30;
+        $this->reset('selected');
     }
 
     public function chat($id)
     {
         $this->redirectRoute('chat', ['id' => $id]);
+    }
+
+    public function archive()
+    {
+        Message::whereIn('id', $this->selected)->get()->each(function ($message) {
+            $message->unread_count_snapshot = $message->unread_count;
+            $message->is_archived = 1;
+            $message->save();
+        });
+        $this->reset('selected');
     }
 
     public function render()

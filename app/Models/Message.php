@@ -26,6 +26,7 @@ class Message extends Model
         'channel_url',
         'latest_message',
         'unread_count',
+        'unread_count_snapshot',
         'data',
         //'order_data',
         //'order_id',
@@ -37,6 +38,7 @@ class Message extends Model
         //'order_customer',
         //'is_cancelled',
         'is_seller',
+        'is_archived',
         'latest_created',
     ];
 

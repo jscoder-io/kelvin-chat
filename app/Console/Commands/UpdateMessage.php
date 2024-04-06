@@ -52,6 +52,13 @@ class UpdateMessage extends Command
                         'data' => $message['data'],
                     ]);
                 }
+
+                Message::where('unread_count', '>', 'unread_count_snapshot')
+                    ->where('is_archived', 1)
+                    ->get()->each(function ($message) {
+                        $message->is_archived = 0;
+                        $message->save();
+                    });
             }
         });
     }

@@ -30,6 +30,7 @@ class Carousell
     protected $cancel_order_url = 'https://www.carousell.sg/ds/order/2.0/orders/%s/cancel/?_path=/2.0/orders/%s/cancel/';
     protected $order_url = 'https://www.carousell.sg/aps/fg/2.0/orders/%s/';
     protected $orders_url = 'https://www.carousell.sg/aps/fg/2.0/orders/';
+    protected $edit_listing_url = 'https://www.carousell.sg/ds/edit-listing/3.0/listings/%s/';
 
     protected $app_id = 'F3CB6187-CB42-4CD1-95FC-1C46F8856006';
 
@@ -550,6 +551,58 @@ class Carousell
             'latest_created' => $offer['data']['latest_price_created'],
             'data' => $offer['data'],
         ];
+    }
+
+    public function updatePrice($listingId, $price)
+    {
+        $client = new Client();
+
+        $jar = CookieJar::fromArray(['jwt' => $this->jwt_token, '_csrf' => $this->_csrf], 'www.carousell.sg');
+
+        try {
+            $res = $client->request('PUT', sprintf($this->edit_listing_url, $listingId), [
+                'headers' => [
+                    'Cache-Control' => 'no-cache',
+                    'Csrf-Token'    => $this->csrf_token,
+                    'Z-Use-Form'    => true,
+                    'Y-Build-No'    => 2,
+                    'User-Agent'    => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+                ],
+                'multipart' => [
+                    [
+                        'name'     => 'layered_condition',
+                        'contents' => 7
+                    ],
+                    [
+                        'name'     => 'title',
+                        'contents' => 'test cable'
+                    ],
+                    [
+                        'name'     => 'delivery_v2',
+                        'contents' => '{"shipping_custom_delivery":"false","shipping_custom_delivery_fee":"","shipping_custom_delivery_period_max":"","shipping_custom_delivery_period_min":"","shipping_express_delivery":"false","shipping_express_delivery_fee":"","shipping_express_delivery_period_max":"2","shipping_express_delivery_period_min":"","shipping_sameday_delivery":"false","shipping_sameday_delivery_fee":"","shipping_sameday_delivery_period_max":"1","shipping_sameday_delivery_period_min":"","shipping_standard_delivery":"true","shipping_standard_delivery_fee":"0","shipping_standard_delivery_period_max":"4","shipping_standard_delivery_period_min":"","caroupay":"true","delivery_v2":"true","mailing":"true","shipping_offer_free_shipping":"false"}'
+                    ],
+                    [
+                        'name'     => 'is_free',
+                        'contents' => 'false'
+                    ],
+                    [
+                        'name'     => 'price',
+                        'contents' => (float)$price
+                    ],
+                ],
+                'cookies' => $jar
+            ]);
+        } catch (\Exception $e) {
+            $this->validateCsrfToken(false);
+            return;
+        }
+
+        if ($res->getStatusCode() == '200') {
+            $json = (string) $res->getBody();
+            $data = Utils::jsonDecode($json, true);
+            $this->validateCsrfToken();
+            return;
+        }
     }
 
     public function getSellerIdByToken()

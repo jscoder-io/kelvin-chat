@@ -9,9 +9,10 @@
             </select>
         </div>
         <div class="w-1/4 pl-4">
-            <select wire:model="filters.unread" wire:change="$refresh" class="block mt-1 p-2 w-full text-sm bg-white border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm">
+            <select wire:model="filters.type" wire:change="$refresh" class="block mt-1 p-2 w-full text-sm bg-white border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm">
                 <option value="0">{{ __('All Messages') }}</option>
                 <option value="1">{{ __('Unread') }}</option>
+                <option value="2">{{ __('Archived') }}</option>
             </select>
         </div>
         <div class="w-2/4 pl-4">
@@ -19,7 +20,12 @@
         </div>
     </div>
     <div class="flex flex-row mb-2">
-        <div class="basis-1/2 text-right mr-2">
+        <div class="basis-1/4 text-left">
+            <button wire:click="archive" type="button" class="inline-flex items-center px-2 py-1 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus-visible:outline-none hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                {{ __('Archive') }}
+            </button>
+        </div>
+        <div class="basis-1/4 text-right mr-2">
             @if ($offset >= 30)
             <a href="#" wire:click.prevent="prev" class="text-xl text-teal-400" title="Previous">
                 <i class="bi bi-arrow-left-square"></i>
@@ -30,7 +36,7 @@
             </div>
             @endif
         </div>
-        <div class="basis-1/2 text-left ml-2">
+        <div class="basis-1/4 text-left ml-2">
             @if ($messages->count() == 30)
             <a href="#" wire:click.prevent="next" class="text-xl text-teal-400" title="Next">
                 <i class="bi bi-arrow-right-square"></i>
@@ -41,12 +47,14 @@
             </div>
             @endif
         </div>
+        <div class="basis-1/4">&nbsp;</div>
     </div>
     <div class="overflow-y-scroll" style="height:calc(100vh - 16rem);">
         @forelse ($messages as $message)
         <div wire:click="chat({{ $message->id }})" class="flex justify-between mb-4 p-4 pl-0 border-b border-gray-300 hover:bg-gray-100 hover:cursor-pointer">
             <div class="w-3/4 pr-4 text-left">
                 <div class="flex">
+                    <input type="checkbox" wire:model="selected" @click.stop="let x = false;" value="{{ $message->id }}" class="mr-2">
                     <img class="w-14 h-14 object-cover" src="{{ $message->product_image_copy ?? $message->product_image }}" />
                     <div class="w-3/4 ml-6">
                         <div class="mb-2">

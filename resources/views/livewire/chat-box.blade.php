@@ -87,7 +87,7 @@
             <div class="grow">
                 <!--<input wire:model="text" wire:keydown.enter="send" @keydown.enter="$el.value = ''" type="text" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm" />-->
                 <!--<textarea x-ref="text" wire:model="text" wire:keydown.enter.prevent="send" @keydown.enter.prevent="$el.value = ''" rows="3" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm"></textarea>-->
-                <textarea x-ref="text" @keydown.enter.prevent="let message = $refs.text.value; $refs.text.value = ''; $wire.dispatch('send-message', { text: message });" rows="3" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm"></textarea>
+                <textarea x-ref="text" @keydown.enter="if ($event.shiftKey === true) return;let message = $refs.text.value; $refs.text.value = ''; $wire.dispatch('send-message', { text: message }); $event.preventDefault();" rows="3" class="block mt-1 p-2 w-full text-sm border border-gray-300 focus-visible:outline-none focus:border-indigo-500 focus:ring-indigo-500 rounded shadow-sm"></textarea>
                 @error('text') <span class="text-red-400">{{ $message }}</span> @enderror
             </div>
             <div class="pl-2">
@@ -122,7 +122,14 @@
                     </tr>
                     <tr>
                         <td class="font-bold pr-4 align-top">Price</td>
-                        <td>{{ $message->price_formatted }}</td>
+                        <td>
+                            {{ $message->price_formatted }} 
+                            <!--
+                            <a wire:click="$dispatch('openModal', { component: 'edit-price', arguments: { message: {{ $message->id }} }})" class="cursor-pointer" title="Edit Price">
+                                <span class="text-blue-700">Edit</span>
+                            </a>
+                            -->
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-bold pr-4 align-top">Url</td>
