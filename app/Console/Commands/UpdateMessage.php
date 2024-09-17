@@ -48,6 +48,7 @@ class UpdateMessage extends Command
                         'channel_url' => $message['channel_url'],
                         'latest_message' => $message['latest_message'],
                         'unread_count' => $message['unread_count'],
+                        //'unread_count_snapshot' => $message['unread_count'],
                         'latest_created' => $message['latest_created'],
                         'data' => $message['data'],
                     ]);
@@ -57,6 +58,7 @@ class UpdateMessage extends Command
                     ->where('is_archived', 1)
                     ->get()->each(function ($message) {
                         $message->is_archived = 0;
+                        //$message->unread_count_snapshot = 0;
                         $message->save();
                     });
             }

@@ -32,6 +32,10 @@ class UpdateOrderData extends Command
         Order::oldest('updated_at')->limit(1)->get()->each(function ($order) {
             $order->touchQuietly();
 
+            if(! $order->shop){
+                return;
+            }
+
             $marketplace = MarketplaceFactory::create($order->shop);
             $orderDetail = $marketplace->orderDetail($order->identifier);
             if ($orderDetail['success']) {
@@ -100,7 +104,7 @@ class UpdateOrderData extends Command
         $address = null;
         if (isset($data['orderDetails']['logisticsInfo']['value'])) {
             $value = json_decode($data['orderDetails']['logisticsInfo']['value'], true);
-            $parts = array_values($value['Location']['Address']);
+            $parts = array_values($value['Location']['Address'] ?? []);
             $address = implode(', ', $parts);
         }
         return $address;

@@ -74,9 +74,13 @@ class MessageTable extends Component
                 });
                 $query->orWhere('username', 'LIKE', '%'.$this->filters['search'].'%');
             });
+            if ($isArchived) {
+                $messages->where('is_archived', $isArchived);
+            }
+        } else {
+            $messages->where('is_archived', $isArchived);
         }
         $messages->where('is_seller', '!=', 1);
-        $messages->where('is_archived', $isArchived);
 
         return $messages->get();
     }

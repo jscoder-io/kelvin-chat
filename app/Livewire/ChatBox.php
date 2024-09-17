@@ -102,6 +102,12 @@ class ChatBox extends Component
         }
     }
 
+    protected function resetUnreadCountSnapshot()
+    {
+        $this->message->unread_count_snapshot = 0;
+        $this->message->save();
+    }
+
     public function mount(Message $message)
     {
         $this->message = $message;
@@ -212,6 +218,8 @@ class ChatBox extends Component
         $this->sendChatQueue();
 
         UpdateChat::dispatch($this->message);
+
+        $this->resetUnreadCountSnapshot();
 
         return view('livewire.chat-box')
             ->with('rows', $this->getChat())
