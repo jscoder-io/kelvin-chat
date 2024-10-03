@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 
 class Order extends Model
 {
@@ -35,5 +36,24 @@ class Order extends Model
     public function message(): BelongsTo
     {
         return $this->belongsTo(Message::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (Order $order) {
+            $query = $order->newModelQuery()->where('id', $order->id);
+            $query->update([
+                'updated_at' => $order->fromDateTime(Date::now()->subDays(10))
+            ]);
+        });
+
+        static::updated(function (Order $order) {
+            if ($order->isDirty('tab')) {
+                $query = $order->newModelQuery()->where('id', $order->id);
+                $query->update([
+                    'updated_at' => $order->fromDateTime(Date::now()->subDays(10))
+                ]);
+            }
+        });
     }
 }
