@@ -40,10 +40,10 @@ class UpdateOrderData extends Command
             $orderDetail = $marketplace->orderDetail($order->identifier);
             if ($orderDetail['success']) {
                 $order->data = $orderDetail['array']; //json
-                $order->total = $order->total ?? $this->extractOrderTotal($orderDetail['array']); //array
-                $order->address = $order->address ?? $this->extractOrderAddress($orderDetail['array']); //string
-                $order->contact = $order->contact ?? $this->extractOrderContact($orderDetail['array']); //string
-                $order->customer = $order->customer ?? $this->extractOrderCustomer($orderDetail['array']); //string
+                $order->total = $this->extractOrderTotal($orderDetail['array']); //array
+                $order->address = $this->extractOrderAddress($orderDetail['array']); //string
+                $order->contact = $this->extractOrderContact($orderDetail['array']); //string
+                $order->customer = $this->extractOrderCustomer($orderDetail['array']); //string
                 $order->offer_id = $order->offer_id ?? $this->extractOrderOfferId($orderDetail['array']); //string;
             }
 
