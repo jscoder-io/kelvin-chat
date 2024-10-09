@@ -50,7 +50,11 @@ class UpdateOrderData extends Command
             if ($order->offer_id) {
                 $message = Message::firstWhere('chat_id', $order->offer_id);
                 if ($message) {
-                    $message->update(['order_status' => $order->tab]);
+                    $messageData = ['order_status' => $order->tab];
+                    if ($order->isDirty('offer_id') && $order->tab == 'to_start') {
+                        $messageData['is_archived'] = 0;
+                    }
+                    $message->update($messageData);
                     $order->message_id = $message->id;
                 } else {
                     $offerDetail = $marketplace->offerDetail($order->offer_id);

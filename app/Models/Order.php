@@ -53,6 +53,12 @@ class Order extends Model
                 $query->update([
                     'updated_at' => $order->fromDateTime(Date::now()->subDays(10))
                 ]);
+
+                $message = Message::find($order->message_id);
+                if($message){
+                    $message->is_archived = 0;
+                    $message->save();
+                }
             }
         });
     }
