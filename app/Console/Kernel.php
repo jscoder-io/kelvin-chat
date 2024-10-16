@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('message:seller-id')->everyMinute();
         $schedule->command('message:order-data')->everyMinute();
         $schedule->command('message:order')->everyFiveMinutes();
+        $schedule->command('message:unarchived')->everyFiveMinutes();
         //$schedule->command('message:download:image')->everyFiveMinutes();
         //$schedule->command('message:chat')->twiceDaily(1, 13);
 
