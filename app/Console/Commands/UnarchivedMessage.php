@@ -29,6 +29,10 @@ class UnarchivedMessage extends Command
     public function handle()
     {
         Message::where('is_archived', 1)->get()->each(function($message) {
+            if(! $message->shop){
+                return;
+            }
+
             UpdateChat::dispatch($message);
 
             $message->refresh();
