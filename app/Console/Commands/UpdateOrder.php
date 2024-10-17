@@ -28,7 +28,8 @@ class UpdateOrder extends Command
      */
     public function handle()
     {
-        Shop::oldest('updated_at')->limit(1)->get()->each(function ($shop) {
+        //Shop::oldest('updated_at')->limit(1)->get()->each(function ($shop) {
+        Shop::oldest('updated_at')->get()->each(function ($shop) {
             $shop->touchQuietly();
             $marketplace = MarketplaceFactory::create($shop);
 
