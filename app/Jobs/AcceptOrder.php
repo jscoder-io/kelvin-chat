@@ -31,6 +31,9 @@ class AcceptOrder implements ShouldQueue
     public function handle(): void
     {
         $marketplace = MarketplaceFactory::create($this->message->shop);
-        $data = $marketplace->acceptOrder($this->message);
+        $order = $this->message->orders->first();
+        if ($order) {
+            $data = $marketplace->acceptOrder($order);
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Marketplace;
 
 use App\Models\Message;
+use App\Models\Order;
 use App\Models\Shop;
 use App\Models\Token;
 use GuzzleHttp\Client;
@@ -450,7 +451,7 @@ class Carousell
         return $results;
     }
 
-    public function acceptOrder(Message $message)
+    public function acceptOrder(Order $order)
     {
         $client = new Client();
 
@@ -459,7 +460,7 @@ class Carousell
         $results = ['success' => false, 'data' => []];
 
         try {
-            $res = $client->request('POST', sprintf($this->accept_order_url, $message->order_data['id'], $message->order_data['id']), [
+            $res = $client->request('POST', sprintf($this->accept_order_url, $order->identifier, $order->identifier), [
                 'headers' => [
                     'Cache-Control' => 'no-cache',
                     'Csrf-Token'    => $this->csrf_token,
@@ -490,7 +491,7 @@ class Carousell
         return $results;
     }
 
-    public function cancelOrder(Message $message)
+    public function cancelOrder(Order $order)
     {
         $client = new Client();
 
@@ -499,7 +500,7 @@ class Carousell
         $results = ['success' => false, 'data' => []];
 
         try {
-            $res = $client->request('POST', sprintf($this->cancel_order_url, $message->order_data['id'], $message->order_data['id']), [
+            $res = $client->request('POST', sprintf($this->cancel_order_url, $order->identifier, $order->identifier), [
                 'headers' => [
                     'Cache-Control' => 'no-cache',
                     'Csrf-Token'    => $this->csrf_token,

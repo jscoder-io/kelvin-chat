@@ -31,6 +31,9 @@ class CancelOrder implements ShouldQueue
     public function handle(): void
     {
         $marketplace = MarketplaceFactory::create($this->message->shop);
-        $data = $marketplace->cancelOrder($this->message);
+        $order = $this->message->orders->first();
+        if ($order) {
+            $data = $marketplace->cancelOrder($order);
+        }
     }
 }
