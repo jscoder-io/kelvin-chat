@@ -118,7 +118,15 @@
                     </tr>
                     <tr>
                         <td class="font-bold pr-4 align-top">Product</td>
-                        <td>{{ $message->product_title }}</td>
+                        <td>
+                            <div onclick="copyToClipboard('{{ str_replace(["\"","'"], '', $message->product_title) }}', 'copied-{{ $message->id }}', event)" title="Copy product" style="position:relative;display:inline-block;margin-right:4px;cursor:pointer;">
+                                <div class="copied-{{ $message->id }}" style="display:none;position:absolute;top:-20px;left:0px;padding:0 4px;background-color:blue;font-size:12px;font-weight:700;color:#FFFFFF;border-radius:4px;">Copied</div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+                                </svg>
+                            </div>
+                            {{ $message->product_title }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-bold pr-4 align-top">Price</td>

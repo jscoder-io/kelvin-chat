@@ -59,6 +59,12 @@
                     <div class="w-3/4 ml-6">
                         <div class="mb-2">
                             <span class="inline-block text-green-700">{{ $message->username }}</span> 
+                            <div onclick="copyToClipboard('{{ $message->username }}', 'copied-{{ $message->id }}', event)" title="Copy username" style="position:relative;display:inline-block;margin:0px 8px;">
+                                <div class="copied-{{ $message->id }}" style="display:none;position:absolute;top:-20px;left:0px;padding:0 4px;background-color:blue;font-size:12px;font-weight:700;color:#FFFFFF;border-radius:4px;">Copied</div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+                                </svg>
+                            </div>
                             @if ($message->unread_count > 0)
                             <span class="inline-block ml-2 text-white bg-blue-700 text-xs px-1.5 py-0.5 leading-none rounded">{{ $message->unread_count }}</span>
                             @endif

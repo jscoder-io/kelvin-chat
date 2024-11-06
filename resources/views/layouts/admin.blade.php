@@ -177,6 +177,16 @@
                     event.target.selected = ! event.target.selected;
                 });
             });
+            function copyToClipboard(text, classname, e){
+                try {
+                    navigator.clipboard.writeText(text);
+                    document.getElementsByClassName(classname)[0].style.display = "block";
+                    //console.log('Content copied to clipboard');
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                }
+                e.stopPropagation();
+            }
         </script>
     </body>
 </html>

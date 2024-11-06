@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Jobs\UpdateInbox;
 use App\Marketplace\Factory as MarketplaceFactory;
+use App\Models\Filter;
 use App\Models\Message;
 use App\Models\Shop;
 use Illuminate\Database\Query\Builder;
@@ -73,6 +74,7 @@ class MessageTable extends Component
                         ->orWhereRaw('`orders`.`address` LIKE \'%'.$this->filters['search'].'%\'');
                 });
                 $query->orWhere('username', 'LIKE', '%'.$this->filters['search'].'%');
+                $query->orWhere('product_title', 'LIKE', '%'.$this->filters['search'].'%');
             });
             if ($isArchived) {
                 $messages->where('is_archived', $isArchived);
@@ -99,6 +101,32 @@ class MessageTable extends Component
     {
         return (string) Date::createFromTimeString($date)
             ->diffForHumans([ 'parts' => 3, 'short' => true ]);
+    }
+
+    protected function saveFiltersIntoDb()
+    {
+        $filter = Filter::firstOrNew(['user_id' => auth()->user()->id]);
+
+        $filter->fill($this->filters)->save();
+    }
+
+    protected function getFiltersFromDb()
+    {
+        $filter = Filter::where('user_id', auth()->user()->id)
+            ->get(['shop', 'type', 'search'])
+            ->first();
+
+        if (! $filter) {
+            Filter::create(['user_id' => auth()->user()->id]);
+            return $this->filters;
+        }
+
+        return array_merge($this->filters, $filter->toArray());
+    }
+
+    public function mount()
+    {
+        $this->filters = $this->getFiltersFromDb();
     }
 
     public function updatedFilters($value, $key)
@@ -139,6 +167,8 @@ class MessageTable extends Component
         //if (! $this->isFiltered()) {
         //    UpdateInbox::dispatch();
         //}
+
+        $this->saveFiltersIntoDb();
 
         return view('livewire.message-table')
             ->with('shops', $this->getShops())

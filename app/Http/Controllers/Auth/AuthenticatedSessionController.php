@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Filter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
@@ -31,6 +32,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        $filter = Filter::firstOrNew(['user_id' => auth()->user()->id]);
+
+        $filter->fill(['shop' => 0, 'type' => 0, 'search' => null])->save();
 
         return redirect(RouteServiceProvider::HOME);
     }
