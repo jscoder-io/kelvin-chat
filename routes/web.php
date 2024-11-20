@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UserController;
@@ -32,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('user');
 
     Route::get('shop', [ShopController::class, 'index'])->name('shop');
+
+    Route::get('order', [OrderController::class, 'index'])->name('order');
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

@@ -25,6 +25,20 @@ class Shop extends Model
         return $this->hasMany(Token::class);
     }
 
+    public function sortedToken()
+    {
+        $tokens = [
+            'jwt-token' => new Token,
+            '_csrf' => new Token,
+            'csrf-token' => new Token,
+            'session-key' => new Token
+        ];
+        foreach ($this->tokens as $token){
+            $tokens[$token->key] = $token;
+        }
+        return $tokens;
+    }
+
     public function isJwtTokenValid()
     {
         foreach ($this->tokens as $token) {

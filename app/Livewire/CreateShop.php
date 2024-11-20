@@ -13,9 +13,11 @@ class CreateShop extends ModalComponent
     {
         $this->form->store();
 
-        session()->flash('message', 'Shop is successfully created.');
+        $this->forceClose()->closeModal();
 
-        $this->redirectRoute('shop');
+        //session()->flash('message', 'Shop is successfully created.');
+
+        //$this->redirectRoute('shop');
     }
 
     public function render()

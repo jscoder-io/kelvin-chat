@@ -18,9 +18,11 @@ class DeleteShop extends ModalComponent
     {
         $this->shop->delete();
 
-        session()->flash('message', 'Shop is successfully deleted.');
+        $this->forceClose()->closeModal();
 
-        $this->redirectRoute('shop');
+        //session()->flash('message', 'Shop is successfully deleted.');
+
+        //$this->redirectRoute('shop');
     }
 
     public function render()

@@ -74,9 +74,11 @@ class CheckTokenAllShop extends ModalComponent
 
     public function completed()
     {
-        session()->flash('message', 'Token checking is done.');
+        $this->forceClose()->closeModal();
 
-        $this->redirectRoute('shop');
+        //session()->flash('message', 'Token checking is done.');
+
+        //$this->redirectRoute('shop');
     }
 
     public function render()

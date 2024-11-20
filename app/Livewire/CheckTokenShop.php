@@ -15,11 +15,13 @@ class CheckTokenShop extends ModalComponent
 {
     public $shop;
     public $close;
+    public $back;
 
-    public function mount(Shop $shop, $close = false)
+    public function mount(Shop $shop, $close = false, $back = false)
     {
         $this->shop = $shop;
         $this->close = $close;
+        $this->back = $back;
     }
 
     public function checkToken($marketplace, $key)

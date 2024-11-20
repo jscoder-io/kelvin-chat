@@ -33,6 +33,11 @@ class EditShopForm extends Form
         }
     }
 
+    public function getShop()
+    {
+        return $this->shop;
+    }
+
     public function rules()
     {
         return [

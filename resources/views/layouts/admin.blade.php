@@ -97,6 +97,16 @@
                     </a>
                 </li>
 
+                <hr class="h-0 mx-4 mb-0 border-0 border-t border-[rgba(255,255,255,0.15)]">
+
+                <!-- Nav Item - Order -->
+                <li @class(['relative', 'active' => 'order' == Route::currentRouteName()])>
+                    <a class="block w-56 p-4 text-left text-[rgba(255,255,255,0.8)] hover:text-white" href="{{ route('order') }}">
+                        <i class="bi bi-cart-fill text-base mr-1"></i>
+                        <span class="block md:inline text-xs md:text-sm">{{ __('Order') }}</span>
+                    </a>
+                </li>
+
                 <hr class="h-0 mx-4 mb-4 border-0 border-t border-[rgba(255,255,255,0.15)]">
             </ul>
             <!-- End of Sidebar -->
@@ -179,9 +189,28 @@
             });
             function copyToClipboard(text, classname, e){
                 try {
-                    navigator.clipboard.writeText(text);
-                    document.getElementsByClassName(classname)[0].style.display = "block";
-                    //console.log('Content copied to clipboard');
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(text);
+                        document.getElementsByClassName(classname)[0].style.display = 'block';
+                        console.log('Content copied to clipboard via navigator');
+                    } else {
+                        var textArea = document.createElement('textarea');
+                        textArea.value = text;
+                        // Avoid scrolling to bottom
+                        textArea.style.top = '0';
+                        textArea.style.left = '0';
+                        textArea.style.position = 'fixed';
+
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+
+                        var successful = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        document.getElementsByClassName(classname)[0].style.display = 'block';
+
+                        console.log('Content copied to clipboard via textarea');
+                    }
                 } catch (err) {
                     console.error('Failed to copy: ', err);
                 }

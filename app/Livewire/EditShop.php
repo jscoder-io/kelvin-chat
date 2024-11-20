@@ -19,9 +19,11 @@ class EditShop extends ModalComponent
     {
         $this->form->update();
 
-        session()->flash('message', 'Shop is successfully updated.');
+        $this->dispatch('openModal', component: 'check-token-shop', arguments: ['shop' => $this->form->getShop(), 'close' => true, 'back' => true]);
 
-        $this->redirectRoute('shop');
+        //session()->flash('message', 'Shop is successfully updated.');
+
+        //$this->redirectRoute('shop');
     }
 
     public function render()
